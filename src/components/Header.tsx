@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Search, User, LogOut } from "lucide-react";
+import { Menu, X, ShoppingCart, Search, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useRole";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user, signOut, loading } = useAuth();
+  const { isAdmin } = useIsAdmin();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -98,6 +100,14 @@ const Header = () => {
                       My Orders
                     </Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     onClick={signOut}
@@ -165,6 +175,15 @@ const Header = () => {
                     >
                       My Orders
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="block text-sm font-medium text-vanilla-brown/70"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <Button
                       onClick={() => {
                         signOut();
