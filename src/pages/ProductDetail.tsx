@@ -8,13 +8,63 @@ import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getProductById, products } from "@/data/products";
+import { useProduct, useProductsByCategory } from "@/hooks/useProducts";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const product = id ? getProductById(id) : null;
+  const { data: product, isLoading } = useProduct(id || '');
+  const { data: categoryProducts = [] } = useProductsByCategory(product?.category);
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+
+  const relatedProducts = categoryProducts
+    .filter(p => p.id !== product?.id)
+    .slice(0, 3);
+
+  const handleAddToCart = () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to add items to your cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!product) return;
+
+    // TODO: Implement cart functionality with Supabase
+    toast({
+      title: "Added to Cart",
+      description: `${quantity} x ${product.name} has been added to your cart.`,
+    });
+  };
+
+  const handleWhatsAppInquiry = () => {
+    if (!product) return;
+    const message = `Hi! I'm interested in ${product.name}. Can you tell me more about it?`;
+    window.open(`https://wa.me/23052345678?text=${encodeURIComponent(message)}`, "_blank");
+  };
+
+  const formatPrice = (priceInCents: number) => {
+    return `Rs ${(priceInCents / 100).toFixed(2)}`;
+  };
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen flex items-center justify-center bg-vanilla-cream">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-vanilla-brown"></div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (!product) {
     return (
@@ -34,20 +84,6 @@ const ProductDetail = () => {
       </>
     );
   }
-
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 3);
-
-  const handleAddToCart = () => {
-    console.log(`Added ${quantity} x ${product.name} to cart`);
-    // Add to cart logic here
-  };
-
-  const handleWhatsAppInquiry = () => {
-    const message = `Hi! I'm interested in ${product.name}. Can you tell me more about it?`;
-    window.open(`https://wa.me/23052345678?text=${encodeURIComponent(message)}`, "_blank");
-  };
 
   return (
     <>
@@ -73,28 +109,30 @@ const ProductDetail = () => {
             <div>
               <div className="mb-4">
                 <img
-                  src={product.gallery[selectedImage]}
+                  src={product.gallery?.[selectedImage] || product.image_url || 'https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=500'}
                   alt={product.name}
                   className="w-full h-96 object-cover rounded-xl luxury-shadow"
                 />
               </div>
-              <div className="flex gap-2 overflow-x-auto">
-                {product.gallery.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-vanilla-brown' : 'border-vanilla-beige/30'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              {product.gallery && product.gallery.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto">
+                  {product.gallery.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                        selectedImage === index ? 'border-vanilla-brown' : 'border-vanilla-beige/30'
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -103,7 +141,7 @@ const ProductDetail = () => {
                 <Badge variant="secondary" className="bg-vanilla-beige text-vanilla-brown">
                   {product.category}
                 </Badge>
-                {product.inStock && (
+                {product.in_stock && (
                   <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800">
                     In Stock
                   </Badge>
@@ -130,36 +168,44 @@ const ProductDetail = () => {
               <div className="bg-vanilla-beige/20 p-6 rounded-xl mb-6">
                 <h3 className="font-serif font-semibold text-vanilla-brown mb-4">Product Details</h3>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-vanilla-brown/70">Origin:</span>
-                    <span className="text-vanilla-brown">{product.details.origin}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-vanilla-brown/70">Grade:</span>
-                    <span className="text-vanilla-brown">{product.details.grade}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-vanilla-brown/70">Processing:</span>
-                    <span className="text-vanilla-brown">{product.details.processing}</span>
-                  </div>
+                  {product.origin && (
+                    <div className="flex justify-between">
+                      <span className="text-vanilla-brown/70">Origin:</span>
+                      <span className="text-vanilla-brown">{product.origin}</span>
+                    </div>
+                  )}
+                  {product.grade && (
+                    <div className="flex justify-between">
+                      <span className="text-vanilla-brown/70">Grade:</span>
+                      <span className="text-vanilla-brown">{product.grade}</span>
+                    </div>
+                  )}
+                  {product.processing && (
+                    <div className="flex justify-between">
+                      <span className="text-vanilla-brown/70">Processing:</span>
+                      <span className="text-vanilla-brown">{product.processing}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="mb-6">
                 <h3 className="font-serif font-semibold text-vanilla-brown mb-3">Perfect For:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.details.uses.map((use, index) => (
+                  {product.uses?.map((use, index) => (
                     <Badge key={index} variant="outline" className="border-vanilla-brown/30 text-vanilla-brown">
                       {use}
                     </Badge>
-                  ))}
+                  )) || (
+                    <p className="text-vanilla-brown/70 text-sm">No specific uses listed</p>
+                  )}
                 </div>
               </div>
 
               <div className="border-t border-vanilla-beige/30 pt-6">
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-3xl font-bold text-vanilla-brown">
-                    Rs {product.price}
+                    {formatPrice(product.price)}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-vanilla-brown/70">Qty:</span>
@@ -220,20 +266,22 @@ const ProductDetail = () => {
               <h2 className="text-2xl font-serif font-bold text-vanilla-brown mb-4">
                 How to Use & Storage
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-semibold text-vanilla-brown mb-3">Storage Instructions</h3>
-                  <p className="text-vanilla-brown/80">{product.details.storage}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-vanilla-brown mb-3">Best Uses</h3>
-                  <ul className="text-vanilla-brown/80 space-y-1">
-                    {product.details.uses.map((use, index) => (
-                      <li key={index}>• {use}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div>
+                   <h3 className="font-semibold text-vanilla-brown mb-3">Storage Instructions</h3>
+                   <p className="text-vanilla-brown/80">{product.storage || 'Store in a cool, dry place'}</p>
+                 </div>
+                 <div>
+                   <h3 className="font-semibold text-vanilla-brown mb-3">Best Uses</h3>
+                   <ul className="text-vanilla-brown/80 space-y-1">
+                     {product.uses?.map((use, index) => (
+                       <li key={index}>• {use}</li>
+                     )) || (
+                       <li>Perfect for various culinary applications</li>
+                     )}
+                   </ul>
+                 </div>
+               </div>
             </CardContent>
           </Card>
 

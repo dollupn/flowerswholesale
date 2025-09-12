@@ -3,25 +3,43 @@ import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  description: string;
-  category: string;
-}
+type Product = Database['public']['Tables']['products']['Row'];
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log(`Added ${product.name} to cart`);
-    // Add to cart logic here
+    e.stopPropagation();
+    
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to add items to your cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // TODO: Implement cart functionality with Supabase
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
+  const formatPrice = (priceInCents: number) => {
+    return `Rs ${(priceInCents / 100).toFixed(2)}`;
   };
 
   return (
@@ -29,10 +47,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link to={`/product/${product.id}`}>
         <div className="aspect-square overflow-hidden bg-gradient-to-br from-vanilla-cream to-vanilla-beige/20">
           <img
-            src={product.image}
+            src={product.image_url || 'https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=500'}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
+          {product.featured && (
+            <div className="absolute top-2 right-2">
+              <Badge variant="secondary" className="bg-vanilla-yellow text-vanilla-brown">
+                Featured
+              </Badge>
+            </div>
+          )}
         </div>
         <CardContent className="p-4">
           <div className="mb-2">
@@ -48,7 +73,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-xl font-bold text-vanilla-brown">
-              Rs {product.price}
+              {formatPrice(product.price)}
             </span>
             <Button
               onClick={handleAddToCart}

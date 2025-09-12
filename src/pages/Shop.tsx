@@ -4,13 +4,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
-import { products } from "@/data/products";
+import { Card, CardContent } from "@/components/ui/card";
+import { useProducts } from "@/hooks/useProducts";
 
 const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("name");
+  const { data: products = [], isLoading } = useProducts();
 
-  const categories = ["All", ...new Set(products.map(p => p.category))];
+  const categories = ["All", ...new Set(products.map(p => p.category).filter(Boolean))];
 
   const filteredProducts = products.filter(product => 
     selectedCategory === "All" || product.category === selectedCategory
@@ -89,13 +91,28 @@ const Shop = () => {
         {/* Products Grid */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {sortedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <Card key={index} className="animate-pulse">
+                    <div className="aspect-square bg-vanilla-beige/20 rounded-t-lg"></div>
+                    <CardContent className="p-4">
+                      <div className="h-4 bg-vanilla-beige/20 rounded mb-2"></div>
+                      <div className="h-6 bg-vanilla-beige/20 rounded mb-3"></div>
+                      <div className="h-4 bg-vanilla-beige/20 rounded w-1/2"></div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {sortedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
 
-            {sortedProducts.length === 0 && (
+            {!isLoading && sortedProducts.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-vanilla-brown/70 text-lg">
                   No products found in this category.

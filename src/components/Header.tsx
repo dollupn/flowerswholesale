@@ -1,12 +1,21 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart, Search } from "lucide-react";
+import { Menu, X, ShoppingCart, Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut, loading } = useAuth();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -55,12 +64,56 @@ const Header = () => {
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Search className="h-5 w-5" />
             </Button>
+            
+            {/* Cart Button */}
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-vanilla-brown text-vanilla-cream text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 0
               </span>
             </Button>
+
+            {/* Authentication */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hidden md:flex">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem disabled className="font-medium">
+                    {user.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders">
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={signOut}
+                    disabled={loading}
+                    className="text-red-600"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild variant="default" className="hidden md:flex bg-vanilla-brown hover:bg-vanilla-brown/90">
+                <Link to="/auth">Sign In</Link>
+              </Button>
+            )}
             
             {/* Mobile Menu Button */}
             <Button
@@ -76,7 +129,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4">
+          <nav className="md:hidden mt-4 pb-4 border-t border-vanilla-beige/20 pt-4">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
@@ -90,6 +143,51 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Mobile Auth */}
+              <div className="pt-4 border-t border-vanilla-beige/20">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="text-sm text-vanilla-brown/70">
+                      Signed in as: {user.email}
+                    </div>
+                    <Link
+                      to="/profile"
+                      className="block text-sm font-medium text-vanilla-brown/70"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="block text-sm font-medium text-vanilla-brown/70"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    <Button
+                      onClick={() => {
+                        signOut();
+                        setIsMenuOpen(false);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={loading}
+                      className="w-full border-vanilla-brown text-vanilla-brown"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    asChild
+                    className="w-full bg-vanilla-brown hover:bg-vanilla-brown/90"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                )}
+              </div>
             </div>
           </nav>
         )}

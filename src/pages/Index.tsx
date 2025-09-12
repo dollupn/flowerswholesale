@@ -7,11 +7,11 @@ import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getFeaturedProducts } from "@/data/products";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const Index = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const featuredProducts = getFeaturedProducts();
+  const { data: featuredProducts = [], isLoading } = useFeaturedProducts();
 
   const testimonials = [
     {
@@ -128,9 +128,23 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {isLoading ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, index) => (
+                <Card key={index} className="animate-pulse">
+                  <div className="aspect-square bg-vanilla-beige/20 rounded-t-lg"></div>
+                  <CardContent className="p-4">
+                    <div className="h-4 bg-vanilla-beige/20 rounded mb-2"></div>
+                    <div className="h-6 bg-vanilla-beige/20 rounded mb-3"></div>
+                    <div className="h-4 bg-vanilla-beige/20 rounded w-1/2"></div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
           </div>
           
           <div className="text-center">
