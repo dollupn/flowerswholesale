@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/hooks/useCart";
 import { Database } from "@/integrations/supabase/types";
 
 type Product = Database['public']['Tables']['products']['Row'];
@@ -16,26 +16,17 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const { addToCart, isAddingToCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to add items to your cart.",
-        variant: "destructive",
-      });
       return;
     }
 
-    // TODO: Implement cart functionality with Supabase
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} has been added to your cart.`,
-    });
+    addToCart({ productId: product.id });
   };
 
   const formatPrice = (priceInCents: number) => {
@@ -78,10 +69,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               onClick={handleAddToCart}
               size="sm"
-              className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream"
+              disabled={!user || isAddingToCart}
+              className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream disabled:opacity-50"
             >
               <ShoppingCart className="w-4 h-4 mr-1" />
-              Add to Cart
+              {isAddingToCart ? "Adding..." : "Add to Cart"}
             </Button>
           </div>
         </CardContent>

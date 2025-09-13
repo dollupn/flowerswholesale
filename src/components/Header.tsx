@@ -5,6 +5,7 @@ import { Menu, X, ShoppingCart, Search, User, LogOut, Settings } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useRole";
+import { useCart } from "@/hooks/useCart";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,7 @@ const Header = () => {
   const location = useLocation();
   const { user, signOut, loading } = useAuth();
   const { isAdmin } = useIsAdmin();
+  const { totalItems } = useCart();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -68,12 +70,16 @@ const Header = () => {
             </Button>
             
             {/* Cart Button */}
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-vanilla-brown text-vanilla-cream text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-vanilla-brown text-vanilla-cream text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Button>
+            </Link>
 
             {/* Authentication */}
             {user ? (
