@@ -31,11 +31,22 @@ export default function AdminSetup() {
 
       if (error) {
         console.error('Error claiming admin:', error);
-        toast({
-          title: "Error",
-          description: "Failed to claim admin access. There might already be an admin user.",
-          variant: "destructive",
-        });
+        // If duplicate key, the user already has the admin role
+        if ((error as any).code === '23505') {
+          toast({
+            title: "You're already an admin",
+            description: "Redirecting to admin dashboard...",
+          });
+          setTimeout(() => {
+            navigate('/admin');
+          }, 1000);
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to claim admin access. There might already be an admin user.",
+            variant: "destructive",
+          });
+        }
       } else {
         toast({
           title: "Success",
