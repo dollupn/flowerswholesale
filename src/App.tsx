@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
+import AdminSetup from "./pages/AdminSetup";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductsManagement from "./pages/admin/ProductsManagement";
 import ProductForm from "./pages/admin/ProductForm";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/admin/setup" element={<AdminSetup />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<ProductsManagement />} />
             <Route path="/admin/products/new" element={<ProductForm />} />
