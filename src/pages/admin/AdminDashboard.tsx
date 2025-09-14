@@ -3,6 +3,7 @@ import { AdminGuard } from '@/components/AdminGuard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProducts } from '@/hooks/useProducts';
 import { Package, ShoppingCart, Users, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const { data: products = [] } = useProducts();
@@ -80,15 +81,15 @@ export default function AdminDashboard() {
                 <CardDescription>Common administrative tasks</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <a href="/admin/products/new" className="block p-2 rounded hover:bg-muted">
+                <Link to="/admin/products/new" className="block p-2 rounded hover:bg-muted">
                   Add New Product
-                </a>
-                <a href="/admin/products" className="block p-2 rounded hover:bg-muted">
+                </Link>
+                <Link to="/admin/products" className="block p-2 rounded hover:bg-muted">
                   Manage Products
-                </a>
-                <a href="/admin/orders" className="block p-2 rounded hover:bg-muted">
+                </Link>
+                <Link to="/admin/orders" className="block p-2 rounded hover:bg-muted">
                   View Orders
-                </a>
+                </Link>
               </CardContent>
             </Card>
           </div>

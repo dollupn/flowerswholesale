@@ -15,8 +15,14 @@ export function AdminGuard({ children, redirectTo = '/' }: AdminGuardProps) {
 
   useEffect(() => {
     if (!authLoading && !roleLoading) {
-      if (!user || !isAdmin) {
+      if (!user) {
+        console.log('AdminGuard: No user, redirecting to:', redirectTo);
         navigate(redirectTo);
+      } else if (!isAdmin) {
+        console.log('AdminGuard: User is not admin, redirecting to:', redirectTo);
+        navigate(redirectTo);
+      } else {
+        console.log('AdminGuard: Access granted for admin user');
       }
     }
   }, [user, isAdmin, authLoading, roleLoading, navigate, redirectTo]);
