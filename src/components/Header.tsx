@@ -69,17 +69,15 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
             
-            {/* Cart Button */}
-            <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-vanilla-brown text-vanilla-cream text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {totalItems}
-                  </span>
-                )}
-              </Button>
-            </Link>
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
 
             {/* Authentication */}
             {user ? (
@@ -130,12 +128,82 @@ const Header = () => {
                 <Link to="/auth">Sign In</Link>
               </Button>
             )}
-            
-            {/* Mobile Menu Button - Hidden since we use bottom nav */}
           </div>
         </div>
 
-        {/* Mobile Navigation - Hidden since we use bottom nav */}
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <nav className="md:hidden mt-4 pb-4 border-t border-vanilla-beige/20 pt-4">
+            <div className="flex flex-col space-y-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`text-sm font-medium transition-colors ${
+                    isActive(item.path) ? "text-vanilla-brown" : "text-vanilla-brown/70"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {/* Mobile Auth */}
+              <div className="pt-4 border-t border-vanilla-beige/20">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="text-sm text-vanilla-brown/70">
+                      Signed in as: {user.email}
+                    </div>
+                    <Link
+                      to="/profile"
+                      className="block text-sm font-medium text-vanilla-brown/70"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="block text-sm font-medium text-vanilla-brown/70"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="block text-sm font-medium text-vanilla-brown/70"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <Button
+                      onClick={() => {
+                        signOut();
+                        setIsMenuOpen(false);
+                      }}
+                      variant="outline"
+                      size="sm"
+                      disabled={loading}
+                      className="w-full border-vanilla-brown text-vanilla-brown"
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    asChild
+                    className="w-full bg-vanilla-brown hover:bg-vanilla-brown/90"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          </nav>
+        )}
       </div>
     </header>
   );
