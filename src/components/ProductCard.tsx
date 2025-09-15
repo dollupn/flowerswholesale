@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { Database } from "@/integrations/supabase/types";
 
-type Product = Database['public']['Tables']['products']['Row'];
+type Product = Database['public']['Tables']['products']['Row'] & { label?: string | null };
 
 interface ProductCardProps {
   product: Product;
