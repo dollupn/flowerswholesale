@@ -49,6 +49,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
               </Badge>
             </div>
           )}
+          {product.label && (
+            <div className="absolute top-2 left-2">
+              <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+                {product.label}
+              </Badge>
+            </div>
+          )}
         </div>
         <CardContent className="p-4">
           <div className="mb-2">
