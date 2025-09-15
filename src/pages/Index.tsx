@@ -60,7 +60,7 @@ const Index = () => {
   }, []);
 
   return (
-    <>
+    <div className="mobile-safe-bottom">
       <Header />
       
       {/* Hero Section */}
@@ -251,7 +251,7 @@ const Index = () => {
       </section>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

@@ -46,7 +46,7 @@ function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12 mobile-safe-bottom">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif font-bold text-vanilla-brown mb-8">

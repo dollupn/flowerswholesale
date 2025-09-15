@@ -31,7 +31,7 @@ const Shop = () => {
   });
 
   return (
-    <>
+    <div className="mobile-safe-bottom">
       <Header />
       
       <div className="min-h-screen bg-vanilla-cream">
@@ -124,7 +124,7 @@ const Shop = () => {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
