@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { useProducts } from '@/hooks/useProducts';
+import { useAllProducts } from '@/hooks/useProducts';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Pencil, Trash2, Plus, Search, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function ProductsManagement() {
-  const { data: products = [], refetch } = useProducts();
+  const { data: products = [], refetch } = useAllProducts();
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
@@ -142,6 +142,11 @@ export default function ProductsManagement() {
                           </Badge>
                           {product.featured && (
                             <Badge variant="outline">Featured</Badge>
+                          )}
+                          {product.label && (
+                            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                              {product.label}
+                            </Badge>
                           )}
                           {product.category && (
                             <Badge variant="outline">{product.category}</Badge>

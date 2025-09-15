@@ -19,6 +19,8 @@ interface ProductFormData {
   price: number;
   category: string;
   image_url: string;
+  gallery: string[];
+  label: string;
   in_stock: boolean;
   featured: boolean;
   origin: string;
@@ -40,6 +42,8 @@ export default function ProductForm() {
     price: 0,
     category: '',
     image_url: '',
+    gallery: [],
+    label: '',
     in_stock: true,
     featured: false,
     origin: '',
@@ -51,6 +55,7 @@ export default function ProductForm() {
 
   const [loading, setLoading] = useState(false);
   const [usesInput, setUsesInput] = useState('');
+  const [galleryInput, setGalleryInput] = useState('');
 
   useEffect(() => {
     if (isEditing && id) {
@@ -79,8 +84,11 @@ export default function ProductForm() {
       ...data,
       price: data.price / 100, // Convert from cents
       uses: data.uses || [],
+      gallery: data.gallery || [],
+      label: data.label || '',
     });
     setUsesInput((data.uses || []).join(', '));
+    setGalleryInput((data.gallery || []).join(', '));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,6 +99,7 @@ export default function ProductForm() {
       ...formData,
       price: Math.round(formData.price * 100), // Convert to cents
       uses: usesInput.split(',').map(use => use.trim()).filter(Boolean),
+      gallery: galleryInput.split(',').map(url => url.trim()).filter(Boolean),
     };
 
     try {
@@ -199,11 +208,32 @@ export default function ProductForm() {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="label">Custom Label</Label>
+                    <Input
+                      id="label"
+                      value={formData.label}
+                      onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                      placeholder="Coming Soon, Best Seller, Limited Edition..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
                     <Label htmlFor="origin">Origin</Label>
                     <Input
                       id="origin"
                       value={formData.origin}
                       onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="image_url">Main Image URL</Label>
+                    <Input
+                      id="image_url"
+                      type="url"
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                     />
                   </div>
                 </div>
@@ -247,13 +277,17 @@ export default function ProductForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="image_url">Image URL</Label>
-                  <Input
-                    id="image_url"
-                    type="url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  <Label htmlFor="gallery">Gallery Images (comma-separated URLs)</Label>
+                  <Textarea
+                    id="gallery"
+                    value={galleryInput}
+                    onChange={(e) => setGalleryInput(e.target.value)}
+                    placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
+                    rows={3}
                   />
+                  <p className="text-sm text-muted-foreground">
+                    Add additional product images separated by commas
+                  </p>
                 </div>
 
                 <div className="flex gap-6">
