@@ -72,4 +72,12 @@
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
   }
+  
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .mobile-safe-bottom {
+    @apply pb-20 md:pb-0;
+  }
 }
