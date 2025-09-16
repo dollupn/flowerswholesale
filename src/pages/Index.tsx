@@ -63,63 +63,68 @@ const Index = () => {
     <div className="mobile-safe-bottom">
       <Header />
       
-      {/* Hero Section */}
-      <section className="gradient-bg min-h-[85vh] flex items-center">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-6xl font-serif font-bold text-vanilla-brown mb-6">
-                Pure Madagascar
-                <span className="block text-vanilla-brown/80">Vanilla</span>
-              </h1>
-              <p className="text-xl text-vanilla-brown/80 mb-8 leading-relaxed">
-                Delivered with Elegance to Mauritius. Experience the authentic taste of 
-                premium vanilla beans, sourced directly from Madagascar's finest farms.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  asChild
-                  size="lg" 
-                  className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8"
-                >
-                  <Link to="/shop">
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Shop Now
-                  </Link>
-                </Button>
-                <Button 
-                  asChild
-                  variant="outline" 
-                  size="lg"
-                  className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
-                >
-                  <Link to="/about">Learn Our Story</Link>
-                </Button>
-              </div>
-            </div>
-           <div className="animate-slide-up">
-            <div className="relative">
-              <video
-              src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-auto rounded-2xl luxury-shadow object-cover"
-              >
-              Sorry, your browser doesn’t support embedded videos.
-              </video>
+      {/* Hero Section (full background video) */}
+<section className="relative min-h-[85vh] flex items-center overflow-hidden">
+  {/* Background video */}
+  <video
+    src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="metadata"
+    poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg" // optional
+    className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
+  />
 
-                  <div className="absolute -bottom-6 -left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
-              <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
-                    <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
-                </div>
-              </div>
-            </div>
+  {/* Readability overlay (tweak gradient/opacity if needed) */}
+  <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
 
-          </div>
+  {/* Content on top */}
+  <div className="relative z-10 container mx-auto px-4 py-12">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="animate-fade-in">
+        <h1 className="text-4xl md:text-6xl font-serif font-bold text-vanilla-brown mb-6">
+          Pure Madagascar
+          <span className="block text-vanilla-brown/80">Vanilla</span>
+        </h1>
+        <p className="text-xl text-vanilla-brown/80 mb-8 leading-relaxed">
+          Delivered with Elegance to Mauritius. Experience the authentic taste of
+          premium vanilla beans, sourced directly from Madagascar&apos;s finest farms.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button
+            asChild
+            size="lg"
+            className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8"
+          >
+            <Link to="/shop">
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              Shop Now
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
+          >
+            <Link to="/about">Learn Our Story</Link>
+          </Button>
         </div>
-      </section>
+      </div>
+
+      {/* Optional floating badge on the right side of hero */}
+      <div className="hidden lg:block relative">
+        <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
+          <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
+          <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Featured Products */}
       <section className="py-16 bg-vanilla-cream">
