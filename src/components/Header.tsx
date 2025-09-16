@@ -69,6 +69,18 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
             
+            {/* Cart Button - Desktop */}
+            <Link to="/cart" className="relative hidden md:flex">
+              <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-vanilla-brown text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Button>
+            </Link>
+            
             {/* Mobile Menu Button */}
             <Button
               variant="ghost"
