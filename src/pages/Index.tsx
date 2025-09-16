@@ -15,19 +15,19 @@ const Index = () => {
 
   const testimonials = [
     {
-      name: "Sophie Laurent",
-      role: "Chef at Le Meridien",
+      name: "Neha",
+      role: "Home Baker",
       text: "Vanilluxe vanilla beans are exceptional. The aroma and flavor are unmatched in Mauritius.",
       rating: 5
     },
     {
       name: "Raj Patel",
-      role: "Home Baker",
+      role: "Chef",
       text: "Finally found authentic Madagascar vanilla in Mauritius! My desserts have never tasted better.",
       rating: 5
     },
     {
-      name: "Marie Dubois",
+      name: "Lea",
       role: "Restaurant Owner",
       text: "The quality is consistent and the flavor is pure. Our customers love our vanilla desserts now.",
       rating: 5
