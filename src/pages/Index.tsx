@@ -97,19 +97,26 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-            <div className="animate-slide-up">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=600"
-                  alt="Premium Madagascar Vanilla Beans"
-                  className="w-full h-auto rounded-2xl luxury-shadow"
-                />
-                <div className="absolute -bottom-6 -left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
-                  <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
-                  <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
+           <div className="animate-slide-up">
+            <div className="relative">
+              <video
+              src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto rounded-2xl luxury-shadow object-cover"
+              >
+              Sorry, your browser doesn’t support embedded videos.
+              </video>
+
+                  <div className="absolute -bottom-6 -left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
+              <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
+                    <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
