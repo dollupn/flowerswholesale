@@ -70,7 +70,7 @@ const Header = () => {
             </Button>
             
             {/* Cart Button - Desktop */}
-            <Link to="/cart" className="relative hidden md:flex">
+            <Link to="/cart" className="relative hidden sm:flex">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (

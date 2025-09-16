@@ -28,13 +28,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        
+
         if (event === 'SIGNED_IN') {
-          toast({
-            title: "Welcome back!",
-            description: "You have been signed in successfully.",
-          });
+          // Prevent duplicate welcome toasts on tab focus or token refresh
+          const hasWelcomed = sessionStorage.getItem('welcomed') === '1';
+          if (!hasWelcomed) {
+            toast({
+              title: "Welcome back!",
+              description: "You have been signed in successfully.",
+            });
+            sessionStorage.setItem('welcomed', '1');
+          }
         } else if (event === 'SIGNED_OUT') {
+          sessionStorage.removeItem('welcomed');
           toast({
             title: "Signed out",
             description: "You have been signed out successfully.",
