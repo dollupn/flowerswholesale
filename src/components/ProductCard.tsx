@@ -23,6 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     e.stopPropagation();
     
     if (!user) {
+      // Could redirect to auth page or show a message
       return;
     }
 
