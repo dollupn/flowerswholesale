@@ -37,11 +37,14 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <img 
-              src="/logo.png" 
-              alt="Vanilluxe Logo" 
+            <img
+              src="/logo.png"
+              alt="Vanilluxe Logo"
               className="h-12 w-auto"
             />
+            <span className="text-xl font-serif font-bold text-vanilla-brown sm:hidden">
+              Vanilluxe
+            </span>
             <div className="hidden sm:block">
               <h1 className="text-2xl font-serif font-bold text-vanilla-brown">Vanilluxe</h1>
               <p className="text-xs text-vanilla-brown/70 -mt-1">Pure Madagascar Vanilla</p>
