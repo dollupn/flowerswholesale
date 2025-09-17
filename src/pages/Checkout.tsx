@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,6 +57,7 @@ function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
   // Load form data from localStorage on mount
   useEffect(() => {
@@ -100,7 +101,7 @@ function CheckoutPage() {
     return phone;
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
     
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
@@ -117,10 +118,17 @@ function CheckoutPage() {
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const isValid = Object.keys(newErrors).length === 0;
+    setIsFormValid(isValid);
+    return isValid;
+  }, [formData]);
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  // Update form validity when form data changes
+  useEffect(() => {
+    validateForm();
+  }, [validateForm]);
+
+  const handleInputChange = useCallback((field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear error when user starts typing
@@ -135,7 +143,7 @@ function CheckoutPage() {
         setFormData(prev => ({ ...prev, phone: formatted }));
       }
     }
-  };
+  }, [errors, formData.phone]);
 
   const handleShippingChange = (value: FormData['shippingMethod']) => {
     let newPaymentMethod = formData.paymentMethod;
@@ -169,7 +177,7 @@ function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!user) return;
-    if (!validateForm()) return;
+    if (!isFormValid) return;
 
     // Check if home delivery is selected but cart total is too low
     if (formData.shippingMethod === 'home_delivery' && isHomeDeliveryDisabled) {
@@ -545,7 +553,7 @@ function CheckoutPage() {
                 
                 <Button
                   onClick={handlePlaceOrder}
-                  disabled={isProcessing || !validateForm()}
+                  disabled={isProcessing || !isFormValid}
                   className="w-full bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream mt-6"
                   size="lg"
                 >
