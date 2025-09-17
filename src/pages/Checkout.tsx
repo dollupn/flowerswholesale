@@ -165,8 +165,8 @@ function CheckoutPage() {
     }));
   };
 
-  const isHomeDeliveryDisabled = totalPrice < 100000; // Rs 1000 = 100000 cents
-  const canSelectHomeDelivery = formData.shippingMethod === 'home_delivery' && !isHomeDeliveryDisabled;
+  const isHomeDeliveryDisabled = false; // Home delivery is always available now
+  const canSelectHomeDelivery = true;
   
   const getShippingFee = (): number => {
     const isAbove1000 = totalPrice >= 100000; // Rs 1000 = 100000 cents
@@ -194,16 +194,7 @@ function CheckoutPage() {
     if (!user) return;
     if (!isFormValid) return;
 
-    // Check if home delivery is selected but cart total is too low
-    if (formData.shippingMethod === 'home_delivery' && isHomeDeliveryDisabled) {
-      toast({
-        title: "Invalid Shipping Option",
-        description: "Home delivery is only available for orders Rs 1000 and above.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    // Remove the check for home delivery minimum since it's always available now
     setIsProcessing(true);
 
     try {
@@ -468,23 +459,14 @@ function CheckoutPage() {
                       <RadioGroupItem 
                         value="home_delivery" 
                         id="home_delivery"
-                        disabled={isHomeDeliveryDisabled}
                       />
-                      <Label 
-                        htmlFor="home_delivery" 
-                        className={`flex-1 ${isHomeDeliveryDisabled ? 'opacity-50' : ''}`}
-                      >
+                      <Label htmlFor="home_delivery" className="flex-1">
                         <div className="flex justify-between">
                           <span>{totalPrice >= 100000 ? 'Free Home Delivery' : 'Home Delivery'}</span>
                           <span className="font-semibold">
                             {totalPrice >= 100000 ? 'Rs 0' : 'Rs 150'}
                           </span>
                         </div>
-                        {isHomeDeliveryDisabled && (
-                          <p className="text-sm text-orange-600 mt-1">
-                            Free for orders Rs 1000+ (below this, please choose Postage or Pickup)
-                          </p>
-                        )}
                       </Label>
                     </div>
                     
