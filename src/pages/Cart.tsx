@@ -125,9 +125,39 @@ function CartPage() {
                     <span className="text-vanilla-brown/70">Subtotal ({totalItems} items)</span>
                     <span className="font-semibold text-vanilla-brown">{formatPrice(totalPrice)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-vanilla-brown/70">Shipping</span>
-                    <span className="font-semibold text-vanilla-brown">Calculated at Checkout</span>
+                  <div className="space-y-2">
+                    <div className="text-vanilla-brown/70 font-medium">Shipping Options:</div>
+                    {totalPrice >= 100000 ? (
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span>• Free Postage</span>
+                          <span className="text-green-600">Free</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Free Home Delivery</span>
+                          <span className="text-green-600">Free</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Pickup at Pereybere</span>
+                          <span className="text-green-600">Free</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span>• Postage</span>
+                          <span>Rs 60.00</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Home Delivery</span>
+                          <span>Rs 150.00</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>• Pickup at Pereybere</span>
+                          <span className="text-green-600">Free</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg">
