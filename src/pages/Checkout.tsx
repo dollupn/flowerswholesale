@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/AuthGuard';
+import Header from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -152,6 +153,10 @@ function CheckoutPage() {
     if (value === 'postage') {
       newPaymentMethod = 'juice';
     }
+    // If home delivery or pickup is selected and current payment is not valid, default to juice
+    else if ((value === 'home_delivery' || value === 'pickup_pereybere') && !getAvailablePaymentMethods().includes(formData.paymentMethod)) {
+      newPaymentMethod = 'juice';
+    }
     
     setFormData(prev => ({ 
       ...prev, 
@@ -164,8 +169,18 @@ function CheckoutPage() {
   const canSelectHomeDelivery = formData.shippingMethod === 'home_delivery' && !isHomeDeliveryDisabled;
   
   const getShippingFee = (): number => {
-    // All shipping is free according to requirements
-    return 0;
+    const isAbove1000 = totalPrice >= 100000; // Rs 1000 = 100000 cents
+    
+    switch (formData.shippingMethod) {
+      case 'postage':
+        return isAbove1000 ? 0 : 6000; // Rs 60 = 6000 cents
+      case 'home_delivery':
+        return isAbove1000 ? 0 : 15000; // Rs 150 = 15000 cents
+      case 'pickup_pereybere':
+        return 0; // Always free
+      default:
+        return 0;
+    }
   };
 
   const getAvailablePaymentMethods = () => {
@@ -294,7 +309,9 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-serif font-bold text-vanilla-brown mb-8">
@@ -439,8 +456,10 @@ function CheckoutPage() {
                       <RadioGroupItem value="postage" id="postage" />
                       <Label htmlFor="postage" className="flex-1">
                         <div className="flex justify-between">
-                          <span>Free Postage</span>
-                          <span className="font-semibold">Rs 0</span>
+                          <span>{totalPrice >= 100000 ? 'Free Postage' : 'Postage'}</span>
+                          <span className="font-semibold">
+                            {totalPrice >= 100000 ? 'Rs 0' : 'Rs 60'}
+                          </span>
                         </div>
                       </Label>
                     </div>
@@ -456,8 +475,10 @@ function CheckoutPage() {
                         className={`flex-1 ${isHomeDeliveryDisabled ? 'opacity-50' : ''}`}
                       >
                         <div className="flex justify-between">
-                          <span>Free Home Delivery</span>
-                          <span className="font-semibold">Rs 0</span>
+                          <span>{totalPrice >= 100000 ? 'Free Home Delivery' : 'Home Delivery'}</span>
+                          <span className="font-semibold">
+                            {totalPrice >= 100000 ? 'Rs 0' : 'Rs 150'}
+                          </span>
                         </div>
                         {isHomeDeliveryDisabled && (
                           <p className="text-sm text-orange-600 mt-1">
@@ -538,7 +559,7 @@ function CheckoutPage() {
                 <div className="flex justify-between">
                   <span className="text-vanilla-brown/70">Shipping</span>
                   <span className="font-semibold text-vanilla-brown">
-                    {getShippingFee() === 0 ? 'Rs 0' : formatPrice(getShippingFee())}
+                    {formatPrice(getShippingFee())}
                   </span>
                 </div>
                 
@@ -564,7 +585,8 @@ function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
