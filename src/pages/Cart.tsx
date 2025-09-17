@@ -7,6 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/AuthGuard';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 function CartPage() {
   const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart, isUpdatingCart } = useCart();
@@ -24,8 +26,9 @@ function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12">
-        <div className="container mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-vanilla-cream via-white to-vanilla-beige">
+        <Header />
+        <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <ShoppingBag className="w-24 h-24 mx-auto text-vanilla-brown/50 mb-6" />
             <h1 className="text-3xl font-serif font-bold text-vanilla-brown mb-4">
@@ -41,13 +44,15 @@ function CartPage() {
             </Link>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-vanilla-cream to-vanilla-beige/30 py-12 mobile-safe-bottom">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-vanilla-cream via-white to-vanilla-beige">
+      <Header />
+      <div className="container mx-auto px-4 py-12 mobile-safe-bottom">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif font-bold text-vanilla-brown mb-8">
             Shopping Cart ({totalItems} items)
@@ -192,6 +197,7 @@ function CartPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
