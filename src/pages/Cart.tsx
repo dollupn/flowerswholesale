@@ -127,7 +127,7 @@ function CartPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-vanilla-brown/70">Shipping</span>
-                    <span className="font-semibold text-vanilla-brown">Free</span>
+                    <span className="font-semibold text-vanilla-brown">Calculated at Checkout</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between text-lg">
