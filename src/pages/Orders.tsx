@@ -35,10 +35,7 @@ function OrdersPage() {
   });
 
   const formatPrice = (priceInCents: number) => {
-    return (priceInCents / 100).toLocaleString('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    });
+    return `Rs ${(priceInCents / 100).toFixed(2)}`;
   };
 
   const getStatusColor = (status: string) => {

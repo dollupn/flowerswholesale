@@ -134,7 +134,7 @@ export default function ProductsManagement() {
                       <div>
                         <CardTitle className="text-lg">{product.name}</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          ${(product.price / 100).toFixed(2)}
+                          {`Rs ${(product.price / 100).toFixed(2)}`}
                         </p>
                         <div className="flex gap-2 mt-2">
                           <Badge variant={product.in_stock ? 'default' : 'secondary'}>
