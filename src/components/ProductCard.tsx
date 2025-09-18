@@ -6,22 +6,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
-import { Database } from "@/integrations/supabase/types";
-
-type Product = Database['public']['Tables']['products']['Row'] & { label?: string | null };
+import { getProductBasePrice, parseProductVariations } from "@/lib/product";
+import type { ProductWithVariations } from "@/hooks/useProducts";
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductWithVariations;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAuth();
   const { addToCart, isAddingToCart } = useCart();
+  const variations = parseProductVariations(product.variations);
+  const hasVariations = !!variations && variations.length > 0;
+  const basePrice = getProductBasePrice(product);
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    if (hasVariations) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!user) {
       // Could redirect to auth page or show a message
       return;
@@ -72,16 +78,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-xl font-bold text-vanilla-brown">
-              {formatPrice(product.price)}
+              {hasVariations ? `From ${formatPrice(basePrice)}` : formatPrice(product.price)}
             </span>
             <Button
               onClick={handleAddToCart}
               size="sm"
-              disabled={!user || isAddingToCart}
+              disabled={!hasVariations && (!user || isAddingToCart)}
               className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream disabled:opacity-50"
             >
               <ShoppingCart className="w-4 h-4 mr-1" />
-              {isAddingToCart ? "Adding..." : "Add to Cart"}
+              {hasVariations ? "View Options" : isAddingToCart ? "Adding..." : "Add to Cart"}
             </Button>
           </div>
         </CardContent>

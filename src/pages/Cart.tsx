@@ -61,30 +61,39 @@ function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
-                <Card key={item.id} className="border-vanilla-beige/30 bg-vanilla-cream">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-3 md:space-x-4">
-                      <img
-                        src={item.product.image_url || 'https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=200'}
-                        alt={item.product.name}
-                        className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg flex-shrink-0"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <Link to={`/product/${item.product.id}`}>
-                          <h3 className="font-serif font-semibold text-base md:text-lg text-vanilla-brown hover:text-vanilla-brown/80 truncate">
-                            {item.product.name}
-                          </h3>
-                        </Link>
-                        <p className="text-vanilla-brown/60 text-xs md:text-sm mb-1 md:mb-2">
-                          {item.product.category}
-                        </p>
-                        <p className="text-vanilla-brown font-semibold text-sm md:text-base">
-                          {formatPrice(item.product.price)}
-                        </p>
-                        
-                        {/* Mobile: Quantity controls below product info */}
-                        <div className="flex items-center justify-between mt-3 md:hidden">
+              {cartItems.map((item) => {
+                const unitPrice = item.variation_price ?? item.product.price;
+
+                return (
+                  <Card key={item.id} className="border-vanilla-beige/30 bg-vanilla-cream">
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-3 md:space-x-4">
+                        <img
+                          src={item.product.image_url || 'https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=200'}
+                          alt={item.product.name}
+                          className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <Link to={`/product/${item.product.id}`}>
+                            <h3 className="font-serif font-semibold text-base md:text-lg text-vanilla-brown hover:text-vanilla-brown/80 truncate">
+                              {item.product.name}
+                            </h3>
+                          </Link>
+                          <p className="text-vanilla-brown/60 text-xs md:text-sm mb-1 md:mb-2">
+                            {item.product.category}
+                          </p>
+                          {item.variation_label && (
+                            <p className="text-xs text-vanilla-brown/70 mb-1">
+                              Variation: {item.variation_label}
+                              {item.variation_sku && ` • SKU: ${item.variation_sku}`}
+                            </p>
+                          )}
+                          <p className="text-vanilla-brown font-semibold text-sm md:text-base">
+                            {formatPrice(unitPrice)}
+                          </p>
+
+                          {/* Mobile: Quantity controls below product info */}
+                          <div className="flex items-center justify-between mt-3 md:hidden">
                           <div className="flex items-center space-x-2">
                             <Button
                               variant="outline"
@@ -152,7 +161,8 @@ function CartPage() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
 
             {/* Order Summary */}

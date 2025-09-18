@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowUp, ShoppingCart, Star, Truck, Shield } from "lucide-react";
 import Header from "@/components/Header";
@@ -11,6 +11,10 @@ import { Badge } from "@/components/ui/badge";
 import { useProduct, useProductsByCategory } from "@/hooks/useProducts";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/hooks/useCart";
+import { parseProductVariations, ProductVariation } from "@/lib/product";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,12 +22,38 @@ const ProductDetail = () => {
   const { data: categoryProducts = [] } = useProductsByCategory(product?.category);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addToCart, isAddingToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariationSku, setSelectedVariationSku] = useState<string | null>(null);
+
+  const variations = useMemo(
+    () => (product ? parseProductVariations(product.variations) : null),
+    [product]
+  );
+  const selectedVariation = variations?.find(variation => variation.sku === selectedVariationSku) ?? null;
+  const displayPrice = selectedVariation ? selectedVariation.price : product?.price ?? 0;
 
   const relatedProducts = categoryProducts
     .filter(p => p.id !== product?.id)
     .slice(0, 3);
+
+  useEffect(() => {
+    if (!product) {
+      setSelectedVariationSku(null);
+      return;
+    }
+
+    if (variations && variations.length > 0) {
+      setSelectedVariationSku(prev =>
+        prev && variations.some(variation => variation.sku === prev)
+          ? prev
+          : variations[0].sku
+      );
+    } else {
+      setSelectedVariationSku(null);
+    }
+  }, [product, variations]);
 
   const handleAddToCart = () => {
     if (!user) {
@@ -37,16 +67,37 @@ const ProductDetail = () => {
 
     if (!product) return;
 
-    // TODO: Implement cart functionality with Supabase
-    toast({
-      title: "Added to Cart",
-      description: `${quantity} x ${product.name} has been added to your cart.`,
-    });
+    if (variations && variations.length > 0) {
+      if (!selectedVariation) {
+        toast({
+          title: "Select a Variation",
+          description: "Please choose a quantity option before adding to your cart.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      addToCart({
+        productId: product.id,
+        quantity,
+        variation: {
+          sku: selectedVariation.sku,
+          label: selectedVariation.label,
+          price: selectedVariation.price,
+        },
+      });
+      return;
+    }
+
+    addToCart({ productId: product.id, quantity });
   };
 
   const handleWhatsAppInquiry = () => {
     if (!product) return;
-    const message = `Hi! I'm interested in ${product.name}. Can you tell me more about it?`;
+    const variationMessage = selectedVariation
+      ? ` (${selectedVariation.label} - SKU ${selectedVariation.sku})`
+      : '';
+    const message = `Hi! I'm interested in ${product.name}${variationMessage}. Can you tell me more about it?`;
     window.open(`https://wa.me/23052345678?text=${encodeURIComponent(message)}`, "_blank");
   };
 
@@ -202,10 +253,48 @@ const ProductDetail = () => {
                 </div>
               </div>
 
+              {variations && variations.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-serif font-semibold text-vanilla-brown mb-3">Select Quantity</h3>
+                  <RadioGroup
+                    value={selectedVariationSku ?? ''}
+                    onValueChange={value => setSelectedVariationSku(value)}
+                    className="space-y-3"
+                  >
+                    {variations.map((variation: ProductVariation) => (
+                      <div
+                        key={variation.sku}
+                        className="flex items-start gap-3 border border-vanilla-beige/60 rounded-lg p-3 hover:border-vanilla-brown transition-colors"
+                      >
+                        <RadioGroupItem
+                          value={variation.sku}
+                          id={`variation-${variation.sku}`}
+                          className="mt-1"
+                        />
+                        <Label htmlFor={`variation-${variation.sku}`} className="flex-1 cursor-pointer">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div>
+                              <p className="font-medium text-vanilla-brown">{variation.label}</p>
+                              {typeof variation.quantity === 'number' && (
+                                <p className="text-sm text-vanilla-brown/70">{variation.quantity} beans</p>
+                              )}
+                              <p className="text-xs text-vanilla-brown/60">SKU: {variation.sku}</p>
+                            </div>
+                            <div className="text-right font-semibold text-vanilla-brown">
+                              {formatPrice(variation.price)}
+                            </div>
+                          </div>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              )}
+
               <div className="border-t border-vanilla-beige/30 pt-6">
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-3xl font-bold text-vanilla-brown">
-                    {formatPrice(product.price)}
+                    {formatPrice(displayPrice)}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-vanilla-brown/70">Qty:</span>
@@ -232,9 +321,10 @@ const ProductDetail = () => {
                     onClick={handleAddToCart}
                     className="flex-1 bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream"
                     size="lg"
+                    disabled={isAddingToCart}
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    Add to Cart
+                    {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                   </Button>
                   <Button
                     onClick={handleWhatsAppInquiry}

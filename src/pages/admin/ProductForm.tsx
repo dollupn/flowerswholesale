@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ProductVariationRow } from '@/lib/product';
 
 interface ProductFormData {
   name: string;
@@ -28,6 +29,15 @@ interface ProductFormData {
   processing: string;
   storage: string;
   uses: string[];
+}
+
+interface VariationForm {
+  id: string;
+  dbId?: string;
+  label: string;
+  sku: string;
+  quantity: string;
+  price: string;
 }
 
 export default function ProductForm() {
@@ -56,6 +66,34 @@ export default function ProductForm() {
   const [loading, setLoading] = useState(false);
   const [usesInput, setUsesInput] = useState('');
   const [galleryInput, setGalleryInput] = useState('');
+  const [variationForms, setVariationForms] = useState<VariationForm[]>([]);
+
+  const createVariationForm = (): VariationForm => ({
+    id: Math.random().toString(36).slice(2),
+    dbId: undefined,
+    label: '',
+    sku: '',
+    quantity: '',
+    price: '',
+  });
+
+  const addVariation = () => {
+    setVariationForms(prev => [...prev, createVariationForm()]);
+  };
+
+  const updateVariation = (
+    id: string,
+    field: keyof Pick<VariationForm, 'label' | 'sku' | 'quantity' | 'price'>,
+    value: string,
+  ) => {
+    setVariationForms(prev => prev.map(variation => (
+      variation.id === id ? { ...variation, [field]: value } : variation
+    )));
+  };
+
+  const removeVariation = (id: string) => {
+    setVariationForms(prev => prev.filter(variation => variation.id !== id));
+  };
 
   useEffect(() => {
     if (isEditing && id) {
@@ -66,7 +104,7 @@ export default function ProductForm() {
   const loadProduct = async (productId: string) => {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, product_variations(*)')
       .eq('id', productId)
       .single();
 
@@ -80,30 +118,182 @@ export default function ProductForm() {
       return;
     }
 
+    const { product_variations: productVariations = null, ...baseProduct } = data as typeof data & {
+      product_variations?: ProductVariationRow[] | null;
+    };
+
     setFormData({
-      ...data,
-      price: data.price / 100, // Convert from cents
-      uses: data.uses || [],
-      gallery: data.gallery || [],
-      label: data.label || '',
+      ...baseProduct,
+      price: baseProduct.price / 100, // Convert from cents
+      uses: baseProduct.uses || [],
+      gallery: baseProduct.gallery || [],
+      label: baseProduct.label || '',
     });
-    setUsesInput((data.uses || []).join(', '));
-    setGalleryInput((data.gallery || []).join(', '));
+    setUsesInput((baseProduct.uses || []).join(', '));
+    setGalleryInput((baseProduct.gallery || []).join(', '));
+    setVariationForms(
+      (productVariations || []).map(variation => ({
+        id: variation.id || Math.random().toString(36).slice(2),
+        dbId: variation.id,
+        label: variation.label,
+        sku: variation.sku,
+        quantity: variation.quantity != null ? String(variation.quantity) : '',
+        price: String(variation.price / 100),
+      }))
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    const normalizedVariations: Array<{
+      label: string;
+      sku: string;
+      price: number;
+      quantity?: number;
+    }> = [];
+
+    for (const variation of variationForms) {
+      const label = variation.label.trim();
+      const sku = variation.sku.trim();
+      const priceInput = variation.price.trim();
+      const quantityValue = variation.quantity.trim();
+      const isCompletelyEmpty = !label && !sku && !priceInput && !quantityValue;
+
+      if (isCompletelyEmpty) {
+        continue;
+      }
+
+      const priceValue = Number.parseFloat(priceInput.replace(/,/g, ''));
+
+      if (!label || !sku) {
+        setLoading(false);
+        toast({
+          title: 'Invalid variation',
+          description: 'Each variation must include a label and SKU.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      if (!Number.isFinite(priceValue)) {
+        setLoading(false);
+        toast({
+          title: 'Invalid variation price',
+          description: 'Please provide a valid numeric price for each variation.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      if (priceValue <= 0) {
+        setLoading(false);
+        toast({
+          title: 'Invalid variation price',
+          description: 'Variation prices must be greater than zero.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const normalizedVariation: {
+        label: string;
+        sku: string;
+        price: number;
+        quantity?: number;
+      } = {
+        label,
+        sku,
+        price: Math.round(priceValue * 100),
+      };
+
+      if (quantityValue) {
+        const quantity = Number.parseInt(quantityValue, 10);
+
+        if (!Number.isFinite(quantity) || Number.isNaN(quantity) || quantity <= 0) {
+          setLoading(false);
+          toast({
+            title: 'Invalid variation quantity',
+            description: 'Variation quantities must be positive whole numbers.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        normalizedVariation.quantity = quantity;
+      }
+
+      normalizedVariations.push(normalizedVariation);
+    }
+
+    const seenSkus = new Set<string>();
+    for (const variation of normalizedVariations) {
+      if (seenSkus.has(variation.sku)) {
+        setLoading(false);
+        toast({
+          title: 'Duplicate variation SKU',
+          description: 'Each variation must have a unique SKU.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      seenSkus.add(variation.sku);
+    }
+
+    const parsedPrice = Number.parseFloat(String(formData.price));
+    if (!Number.isFinite(parsedPrice) || Number.isNaN(parsedPrice)) {
+      setLoading(false);
+      toast({
+        title: 'Invalid product price',
+        description: 'Please provide a valid base price for the product.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const productData = {
       ...formData,
-      price: Math.round(formData.price * 100), // Convert to cents
+      price: Math.round(parsedPrice * 100), // Convert to cents
       uses: usesInput.split(',').map(use => use.trim()).filter(Boolean),
       gallery: galleryInput.split(',').map(url => url.trim()).filter(Boolean),
     };
 
     try {
+      const persistVariations = async (productId: string) => {
+        const { error: deleteError } = await supabase
+          .from('product_variations')
+          .delete()
+          .eq('product_id', productId);
+
+        if (deleteError) throw deleteError;
+
+        if (normalizedVariations.length === 0) {
+          return;
+        }
+
+        const { error: insertError } = await supabase
+          .from('product_variations')
+          .insert(
+            normalizedVariations.map(variation => ({
+              product_id: productId,
+              label: variation.label,
+              sku: variation.sku,
+              price: variation.price,
+              quantity: variation.quantity ?? null,
+            }))
+          );
+
+        if (insertError) throw insertError;
+      };
+
+      let productIdValue = id ?? '';
+
       if (isEditing) {
+        if (!productIdValue) {
+          throw new Error('Missing product identifier');
+        }
+
         const { error } = await supabase
           .from('products')
           .update(productData)
@@ -111,16 +301,24 @@ export default function ProductForm() {
 
         if (error) throw error;
 
+        await persistVariations(productIdValue);
+
         toast({
           title: 'Success',
           description: 'Product updated successfully',
         });
       } else {
-        const { error } = await supabase
+        const { data: insertedProduct, error } = await supabase
           .from('products')
-          .insert([productData]);
+          .insert([productData])
+          .select()
+          .single();
 
-        if (error) throw error;
+        if (error || !insertedProduct) throw error ?? new Error('Failed to create product');
+
+        productIdValue = insertedProduct.id;
+
+        await persistVariations(productIdValue);
 
         toast({
           title: 'Success',
@@ -132,9 +330,10 @@ export default function ProductForm() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to save product',
+        description: error instanceof Error ? error.message : 'Failed to save product',
         variant: 'destructive',
       });
+      console.error('Product save error:', error);
     } finally {
       setLoading(false);
     }
@@ -288,6 +487,87 @@ export default function ProductForm() {
                   <p className="text-sm text-muted-foreground">
                     Add additional product images separated by commas
                   </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Variations</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Add quantity-based pricing options for this product.
+                      </p>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={addVariation}>
+                      Add Variation
+                    </Button>
+                  </div>
+
+                  {variationForms.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No variations added yet. Click "Add Variation" to create one.
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {variationForms.map((variation) => (
+                        <div
+                          key={variation.id}
+                          className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end border border-muted rounded-lg p-3"
+                        >
+                          <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor={`variation-label-${variation.id}`}>Label</Label>
+                            <Input
+                              id={`variation-label-${variation.id}`}
+                              value={variation.label}
+                              onChange={(e) => updateVariation(variation.id, 'label', e.target.value)}
+                              placeholder="3 Vanilla Beans"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor={`variation-sku-${variation.id}`}>SKU</Label>
+                            <Input
+                              id={`variation-sku-${variation.id}`}
+                              value={variation.sku}
+                              onChange={(e) => updateVariation(variation.id, 'sku', e.target.value)}
+                              placeholder="VL1-3"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor={`variation-quantity-${variation.id}`}>Quantity</Label>
+                            <Input
+                              id={`variation-quantity-${variation.id}`}
+                              type="number"
+                              min="0"
+                              value={variation.quantity}
+                              onChange={(e) => updateVariation(variation.id, 'quantity', e.target.value)}
+                              placeholder="3"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor={`variation-price-${variation.id}`}>Price (MUR)</Label>
+                            <Input
+                              id={`variation-price-${variation.id}`}
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={variation.price}
+                              onChange={(e) => updateVariation(variation.id, 'price', e.target.value)}
+                              placeholder="210"
+                            />
+                          </div>
+                          <div className="md:col-span-1">
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              onClick={() => removeVariation(variation.id)}
+                              className="w-full"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-6">

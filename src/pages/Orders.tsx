@@ -118,13 +118,19 @@ function OrdersPage() {
                         )}
                         <div className="flex-1">
                           <h4 className="font-medium">{item.product?.name}</h4>
+                          {item.variation_label && (
+                            <p className="text-xs text-gray-500">
+                              {item.variation_label}
+                              {item.variation_sku && ` • SKU: ${item.variation_sku}`}
+                            </p>
+                          )}
                           <p className="text-sm text-gray-600">
-                            Quantity: {item.quantity} × {formatPrice(item.price_per_item)}
+                            Quantity: {item.quantity} × {formatPrice(item.variation_price ?? item.price_per_item)}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="font-medium">
-                            {formatPrice(item.price_per_item * item.quantity)}
+                            {formatPrice((item.variation_price ?? item.price_per_item) * item.quantity)}
                           </p>
                         </div>
                       </div>
