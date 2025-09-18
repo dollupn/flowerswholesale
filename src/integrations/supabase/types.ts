@@ -20,6 +20,9 @@ export type Database = {
           id: string
           product_id: string
           quantity: number
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
           updated_at: string | null
           user_id: string
         }
@@ -28,6 +31,9 @@ export type Database = {
           id?: string
           product_id: string
           quantity: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -36,6 +42,9 @@ export type Database = {
           id?: string
           product_id?: string
           quantity?: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -57,6 +66,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
         }
         Insert: {
           created_at?: string | null
@@ -65,6 +77,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Update: {
           created_at?: string | null
@@ -73,6 +88,9 @@ export type Database = {
           price_per_item?: number
           product_id?: string
           quantity?: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Relationships: [
           {
@@ -139,6 +157,7 @@ export type Database = {
           processing: string | null
           storage: string | null
           updated_at: string | null
+          variations: Json | null
           uses: string[] | null
         }
         Insert: {
@@ -158,6 +177,7 @@ export type Database = {
           processing?: string | null
           storage?: string | null
           updated_at?: string | null
+          variations?: Json | null
           uses?: string[] | null
         }
         Update: {
@@ -177,6 +197,7 @@ export type Database = {
           processing?: string | null
           storage?: string | null
           updated_at?: string | null
+          variations?: Json | null
           uses?: string[] | null
         }
         Relationships: []

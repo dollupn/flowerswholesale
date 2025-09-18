@@ -16,13 +16,19 @@ export interface Product {
     storage: string;
   };
   gallery: string[];
+  variations?: {
+    label: string;
+    sku: string;
+    quantity?: number;
+    price: number;
+  }[];
 }
 
 export const products: Product[] = [
   {
     id: "vanilla-beans-premium",
     name: "Premium Madagascar Vanilla Beans",
-    price: 850,
+    price: 21000,
     image: "https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=500",
     description: "Grade A vanilla beans directly sourced from Madagascar. Perfect for baking, desserts, and gourmet cooking.",
     category: "Vanilla Beans",
@@ -39,6 +45,13 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=500",
       "https://images.unsplash.com/photo-1557679569-4bd6ac1bb98e?w=500",
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500"
+    ],
+    variations: [
+      { label: "3 Vanilla Beans", sku: "VL1-3", quantity: 3, price: 21000 },
+      { label: "5 Vanilla Beans", sku: "VL1-5", quantity: 5, price: 32500 },
+      { label: "10 Vanilla Beans", sku: "VL1-10", quantity: 10, price: 60000 },
+      { label: "25 Vanilla Beans", sku: "VL1-25", quantity: 25, price: 140000 },
+      { label: "50 Vanilla Beans", sku: "VL1-50", quantity: 50, price: 260000 }
     ]
   },
   {
