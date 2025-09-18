@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { useAllProducts } from '@/hooks/useProducts';
+import { useAllProducts, ProductWithVariations } from '@/hooks/useProducts';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Pencil, Trash2, Plus, Search, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getProductBasePrice } from '@/lib/product';
 
 export default function ProductsManagement() {
   const { data: products = [], refetch } = useAllProducts();
@@ -119,8 +120,12 @@ export default function ProductsManagement() {
           </div>
 
           <div className="grid gap-4">
-            {filteredProducts.map((product) => (
-              <Card key={product.id}>
+            {filteredProducts.map((product: ProductWithVariations) => {
+              const variations = product.variations;
+              const basePrice = getProductBasePrice(product);
+
+              return (
+                <Card key={product.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="flex gap-4">
@@ -134,8 +139,13 @@ export default function ProductsManagement() {
                       <div>
                         <CardTitle className="text-lg">{product.name}</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          {`Rs ${(product.price / 100).toFixed(2)}`}
+                          {`Rs ${(basePrice / 100).toFixed(2)}`}
                         </p>
+                        {variations?.length ? (
+                          <p className="text-xs text-muted-foreground">
+                            {variations.length} variation{variations.length === 1 ? '' : 's'} available
+                          </p>
+                        ) : null}
                         <div className="flex gap-2 mt-2">
                           <Badge variant={product.in_stock ? 'default' : 'secondary'}>
                             {product.in_stock ? 'In Stock' : 'Out of Stock'}
@@ -192,8 +202,9 @@ export default function ProductsManagement() {
                     </p>
                   </CardContent>
                 )}
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
 
           {filteredProducts.length === 0 && (

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -42,7 +41,6 @@ const Index = () => {
       rating: 5
     }
   ];
-
   const testimonialCount = testimonials.length;
 
   const features = [
@@ -63,6 +61,7 @@ const Index = () => {
     }
   ];
 
+  // New recipes data with paths (for dedicated pages) and hi-res images
   const recipes = [
     {
       title: "Vanilla Bean Crème Brûlée",
@@ -95,7 +94,6 @@ const Index = () => {
       path: "/recipes/vanilla-spice-iced-latte"
     }
   ];
-
   const recipeCount = recipes.length;
 
   useEffect(() => {
@@ -115,10 +113,9 @@ const Index = () => {
   return (
     <div className="mobile-safe-bottom">
       <Header />
-      
+
       {/* Hero Section (full background video) */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        {/* Background video */}
         <video
           src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
           autoPlay
@@ -126,14 +123,10 @@ const Index = () => {
           loop
           playsInline
           preload="metadata"
-          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg" // optional
+          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg"
           className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
         />
-
-        {/* Readability overlay (tweak gradient/opacity if needed) */}
         <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
-
-        {/* Content on top */}
         <div className="relative z-10 container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
@@ -166,8 +159,6 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-
-            {/* Optional floating badge on the right side of hero */}
             <div className="hidden lg:block relative">
               <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
                 <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
@@ -177,7 +168,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
 
       {/* Featured Products */}
       <section className="py-16 bg-vanilla-cream">
@@ -191,10 +181,9 @@ const Index = () => {
               perfect for gourmet cooking and baking.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {isLoading ? (
-              // Loading skeleton
               Array.from({ length: 3 }).map((_, index) => (
                 <Card key={index} className="animate-pulse">
                   <div className="aspect-square bg-vanilla-beige/20 rounded-t-lg"></div>
@@ -211,7 +200,7 @@ const Index = () => {
               ))
             )}
           </div>
-          
+
           <div className="text-center">
             <Button asChild size="lg" variant="outline" className="border-vanilla-brown text-vanilla-brown">
               <Link to="/shop">View All Products</Link>
@@ -231,7 +220,7 @@ const Index = () => {
               We're committed to bringing you the finest vanilla experience in Mauritius.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card key={index} className="text-center luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
@@ -252,14 +241,14 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Vanilla Recipe Carousel */}
-      <section className="bg-[#738b16] py-16">
+      {/* Vanilla Recipe Carousel (refined + dedicated page links) */}
+      <section className="py-16 bg-vanilla-cream">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center text-white">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
               Vanilla Recipes
             </h2>
-            <p className="mx-auto max-w-2xl text-white/80">
+            <p className="text-vanilla-brown/70 max-w-2xl mx-auto">
               Explore decadent ways to savour our Madagascar vanilla with easy-to-follow recipes.
             </p>
           </div>
@@ -270,7 +259,7 @@ const Index = () => {
               onClick={() =>
                 setCurrentRecipe((prev) => (prev - 1 + recipes.length) % recipes.length)
               }
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white p-2.5 text-[#738b16] shadow-lg transition hover:bg-white/90 sm:-left-12 sm:p-3"
+              className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
               aria-label="Previous recipe"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -279,13 +268,13 @@ const Index = () => {
             <button
               type="button"
               onClick={() => setCurrentRecipe((prev) => (prev + 1) % recipes.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white p-2.5 text-[#738b16] shadow-lg transition hover:bg-white/90 sm:-right-12 sm:p-3"
+              className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
               aria-label="Next recipe"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
 
-            <Card className="luxury-shadow border-vanilla-beige/40 bg-white/95 backdrop-blur">
+            <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
               <CardContent className="p-6 md:p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                   <div className="overflow-hidden rounded-2xl shadow-md aspect-[4/3]">
@@ -321,13 +310,15 @@ const Index = () => {
                       </span>
                     </div>
 
-                    <Button
-                      asChild
-                      className="bg-[#738b16] text-white hover:bg-[#5c6d11]"
-                      size="lg"
-                    >
-                      <Link to={recipes[currentRecipe].path}>View full recipe</Link>
-                    </Button>
+                    {recipes[currentRecipe].path && (
+                      <Button
+                        asChild
+                        size="lg"
+                        className="bg-vanilla-brown text-vanilla-cream hover:bg-vanilla-brown/90"
+                      >
+                        <Link to={recipes[currentRecipe].path}>View full recipe</Link>
+                      </Button>
+                    )}
 
                     <div className="text-sm text-vanilla-brown/60">
                       <p className="font-semibold text-vanilla-brown">Chef's Tip</p>
@@ -366,7 +357,7 @@ const Index = () => {
               What Our Customers Say
             </h2>
           </div>
-          
+
           <div className="max-w-4xl mx-auto">
             <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
               <CardContent className="p-8 text-center">
@@ -388,7 +379,7 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <div className="flex justify-center mt-6 space-x-2">
               {testimonials.map((_, index) => (
                 <button
