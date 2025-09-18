@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -42,7 +41,6 @@ const Index = () => {
       rating: 5
     }
   ];
-
   const testimonialCount = testimonials.length;
 
   const features = [
@@ -63,36 +61,39 @@ const Index = () => {
     }
   ];
 
+  // New recipes data with paths (for dedicated pages) and hi-res images
   const recipes = [
     {
       title: "Vanilla Bean Crème Brûlée",
       description:
         "A silky custard infused with Madagascar vanilla, finished with a caramelised sugar crust.",
       image:
-        "https://images.unsplash.com/photo-1541959833400-049d37f98ccd?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1541959833400-049d37f98ccd?auto=format&fit=crop&w=1200&q=80",
       prepTime: "45 mins",
-      serves: "Serves 4"
+      serves: "Serves 4",
+      path: "/recipes/vanilla-bean-creme-brulee"
     },
     {
       title: "Mauritian Vanilla Gateau",
       description:
         "A moist butter cake layered with vanilla bean pastry cream and toasted coconut flakes.",
       image:
-        "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=1200&q=80",
       prepTime: "1 hr 10 mins",
-      serves: "Serves 8"
+      serves: "Serves 8",
+      path: "/recipes/mauritian-vanilla-gateau"
     },
     {
       title: "Vanilla & Spice Iced Latte",
       description:
         "Cold-brew coffee sweetened with vanilla bean syrup and a touch of island spices for a refreshing treat.",
       image:
-        "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=1200&q=80",
       prepTime: "15 mins",
-      serves: "Serves 2"
+      serves: "Serves 2",
+      path: "/recipes/vanilla-spice-iced-latte"
     }
   ];
-
   const recipeCount = recipes.length;
 
   useEffect(() => {
@@ -112,10 +113,9 @@ const Index = () => {
   return (
     <div className="mobile-safe-bottom">
       <Header />
-      
+
       {/* Hero Section (full background video) */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        {/* Background video */}
         <video
           src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
           autoPlay
@@ -123,14 +123,10 @@ const Index = () => {
           loop
           playsInline
           preload="metadata"
-          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg" // optional
+          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg"
           className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
         />
-
-        {/* Readability overlay (tweak gradient/opacity if needed) */}
         <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
-
-        {/* Content on top */}
         <div className="relative z-10 container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
@@ -163,8 +159,6 @@ const Index = () => {
                 </Button>
               </div>
             </div>
-
-            {/* Optional floating badge on the right side of hero */}
             <div className="hidden lg:block relative">
               <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
                 <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
@@ -174,7 +168,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
 
       {/* Featured Products */}
       <section className="py-16 bg-vanilla-cream">
@@ -188,10 +181,9 @@ const Index = () => {
               perfect for gourmet cooking and baking.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {isLoading ? (
-              // Loading skeleton
               Array.from({ length: 3 }).map((_, index) => (
                 <Card key={index} className="animate-pulse">
                   <div className="aspect-square bg-vanilla-beige/20 rounded-t-lg"></div>
@@ -208,7 +200,7 @@ const Index = () => {
               ))
             )}
           </div>
-          
+
           <div className="text-center">
             <Button asChild size="lg" variant="outline" className="border-vanilla-brown text-vanilla-brown">
               <Link to="/shop">View All Products</Link>
@@ -228,7 +220,7 @@ const Index = () => {
               We're committed to bringing you the finest vanilla experience in Mauritius.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card key={index} className="text-center luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
@@ -249,7 +241,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Vanilla Recipe Carousel */}
+      {/* Vanilla Recipe Carousel (refined + dedicated page links) */}
       <section className="py-16 bg-vanilla-cream">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -285,7 +277,7 @@ const Index = () => {
             <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
               <CardContent className="p-6 md:p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="overflow-hidden rounded-2xl shadow-md">
+                  <div className="overflow-hidden rounded-2xl shadow-md aspect-[4/3]">
                     <img
                       src={recipes[currentRecipe].image}
                       alt={recipes[currentRecipe].title}
@@ -317,6 +309,16 @@ const Index = () => {
                         Madagascar Vanilla
                       </span>
                     </div>
+
+                    {recipes[currentRecipe].path && (
+                      <Button
+                        asChild
+                        size="lg"
+                        className="bg-vanilla-brown text-vanilla-cream hover:bg-vanilla-brown/90"
+                      >
+                        <Link to={recipes[currentRecipe].path}>View full recipe</Link>
+                      </Button>
+                    )}
 
                     <div className="text-sm text-vanilla-brown/60">
                       <p className="font-semibold text-vanilla-brown">Chef's Tip</p>
@@ -355,7 +357,7 @@ const Index = () => {
               What Our Customers Say
             </h2>
           </div>
-          
+
           <div className="max-w-4xl mx-auto">
             <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
               <CardContent className="p-8 text-center">
@@ -377,7 +379,7 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <div className="flex justify-center mt-6 space-x-2">
               {testimonials.map((_, index) => (
                 <button
