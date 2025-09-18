@@ -106,20 +106,38 @@ export default function OrdersManagement() {
       
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      toast({
-        title: "Order Updated",
-        description: "Order status has been updated successfully.",
+    onMutate: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
+      await queryClient.cancelQueries({ queryKey: ['admin-orders'] });
+      const previous = queryClient.getQueryData<any[]>(['admin-orders']);
+
+      // Optimistically update the cache
+      queryClient.setQueryData<any[]>(['admin-orders'], (old) => {
+        if (!old) return old as any;
+        return old.map((o: any) => (o.id === orderId ? { ...o, status: newStatus } : o));
       });
+
+      return { previous } as any;
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      const prev = (context as any)?.previous;
+      if (prev) {
+        queryClient.setQueryData(['admin-orders'], prev);
+      }
       toast({
         title: "Error",
         description: "Failed to update order status.",
         variant: "destructive",
       });
       console.error('Failed to update order status:', error);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Order Updated",
+        description: "Order status has been updated successfully.",
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
     },
   });
 
