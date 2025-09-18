@@ -10,25 +10,79 @@ export default function OrdersManagement() {
     queryKey: ['admin-orders'],
     queryFn: async () => {
       console.log('Fetching orders...');
-      const { data, error } = await supabase
+      // 1) Fetch orders first (no relations)
+      const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select(`
-          *,
-          profiles(first_name, last_name, email),
-          order_items(
-            quantity,
-            price_per_item,
-            products(name)
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('Orders query result:', { data, error });
-      if (error) {
-        console.error('Orders query error:', error);
-        throw error;
+      if (ordersError) {
+        console.error('Orders base query error:', ordersError);
+        throw ordersError;
       }
-      return data;
+
+      if (!ordersData || ordersData.length === 0) {
+        console.log('No orders found.');
+        return [] as any[];
+      }
+
+      const userIds = Array.from(new Set(ordersData.map((o: any) => o.user_id).filter(Boolean))) as string[];
+      const orderIds = ordersData.map((o: any) => o.id) as string[];
+
+      // 2) Fetch related data in parallel without relying on FKs
+      const [profilesRes, orderItemsRes] = await Promise.all([
+        supabase.from('profiles').select('id, first_name, last_name, email').in('id', userIds as string[]),
+        supabase.from('order_items').select('id, order_id, product_id, quantity, price_per_item, created_at').in('order_id', orderIds as string[]),
+      ]);
+
+      const profilesError = (profilesRes as any).error;
+      const orderItemsError = (orderItemsRes as any).error;
+
+      if (profilesError) console.warn('Profiles fetch warning:', profilesError);
+      if (orderItemsError) console.warn('Order items fetch warning:', orderItemsError);
+
+      const profilesData = (profilesRes as any).data ?? [];
+      const orderItemsData = (orderItemsRes as any).data ?? [];
+
+      const productIds = Array.from(new Set(orderItemsData.map((i: any) => i.product_id).filter(Boolean))) as string[];
+
+      const { data: productsData, error: productsError } = await supabase
+        .from('products')
+        .select('id, name')
+        .in('id', productIds as string[]);
+
+      if (productsError) console.warn('Products fetch warning:', productsError);
+
+      // 3) Build maps for quick lookup
+      const profilesMap = new Map<string, any>(profilesData.map((p: any) => [p.id as string, p]));
+      const productsMap = new Map<string, any>((productsData ?? []).map((p: any) => [p.id as string, p]));
+
+      const itemsByOrder = new Map<string, any[]>();
+      for (const item of orderItemsData) {
+        const list = itemsByOrder.get(item.order_id) ?? [];
+        list.push(item);
+        itemsByOrder.set(item.order_id, list);
+      }
+
+      // 4) Enrich orders to match UI shape (profiles, order_items.products)
+      const enriched = ordersData.map((o: any) => {
+        const profile = profilesMap.get(o.user_id);
+        const items = (itemsByOrder.get(o.id) ?? []).map((it: any) => ({
+          quantity: it.quantity,
+          price_per_item: it.price_per_item,
+          products: { name: productsMap.get(it.product_id)?.name ?? 'Unknown product' },
+        }));
+        return {
+          ...o,
+          profiles: profile
+            ? { first_name: profile.first_name, last_name: profile.last_name, email: profile.email }
+            : null,
+          order_items: items,
+        };
+      });
+
+      console.log('Enriched orders result:', enriched);
+      return enriched as any[];
     },
   });
 
