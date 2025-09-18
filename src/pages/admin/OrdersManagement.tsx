@@ -6,9 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function OrdersManagement() {
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [], isLoading, error } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
+      console.log('Fetching orders...');
       const { data, error } = await supabase
         .from('orders')
         .select(`
@@ -22,10 +23,16 @@ export default function OrdersManagement() {
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Orders query result:', { data, error });
+      if (error) {
+        console.error('Orders query error:', error);
+        throw error;
+      }
       return data;
     },
   });
+
+  console.log('Orders in component:', orders, 'Loading:', isLoading, 'Error:', error);
 
   const getStatusColor = (status: string) => {
     switch (status) {
