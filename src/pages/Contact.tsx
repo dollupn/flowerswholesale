@@ -17,16 +17,51 @@ const Contact = () => {
     subject: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for your inquiry. We'll get back to you within 24 hours.",
-    });
-    setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/info@vanilluxe.store", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          _subject: `New contact form submission: ${formData.subject}`
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send contact form");
+      }
+
+      await response.json();
+
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for your inquiry. We'll get back to you within 24 hours.",
+      });
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("Error sending contact form", error);
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "We couldn't send your message. Please try again or reach us via WhatsApp.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -151,13 +186,14 @@ const Contact = () => {
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="w-full bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream"
                       size="lg"
+                      disabled={isSubmitting}
                     >
                       <Mail className="w-5 h-5 mr-2" />
-                      Send Message
+                      {isSubmitting ? "Sending..." : "Send Message"}
                     </Button>
                   </form>
                 </CardContent>
@@ -243,10 +279,21 @@ const Contact = () => {
                     </div>
                   </div>
                   <div className="space-y-2 text-sm text-vanilla-brown/70">
-                    <p>• Free delivery for orders over Rs 500</p>
-                    <p>• Same-day delivery in Port Louis area</p>
-                    <p>• Express delivery available</p>
-                    <p>• Pickup options available</p>
+                    <p>
+                      • Postage
+                      <br />
+                      Rs 60.00 / Free over Rs.1000
+                    </p>
+                    <p>
+                      • Home Delivery
+                      <br />
+                      Rs 150.00 / Free over Rs.1000
+                    </p>
+                    <p>
+                      • Pickup at Pereybere
+                      <br />
+                      Free
+                    </p>
                   </div>
                 </CardContent>
               </Card>
