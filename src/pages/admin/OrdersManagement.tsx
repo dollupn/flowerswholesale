@@ -36,7 +36,7 @@ export default function OrdersManagement() {
       // 2) Fetch related data in parallel without relying on FKs
       const [profilesRes, orderItemsRes] = await Promise.all([
         supabase.from('profiles').select('id, first_name, last_name, email, phone').in('id', userIds as string[]),
-        supabase.from('order_items').select('id, order_id, product_id, quantity, price_per_item, created_at').in('order_id', orderIds as string[]),
+        supabase.from('order_items').select('id, order_id, product_id, quantity, price_per_item, variation_label, variation_sku, variation_price, created_at').in('order_id', orderIds as string[]),
       ]);
 
       const profilesError = (profilesRes as any).error;
@@ -74,6 +74,9 @@ export default function OrdersManagement() {
         const items = (itemsByOrder.get(o.id) ?? []).map((it: any) => ({
           quantity: it.quantity,
           price_per_item: it.price_per_item,
+          variation_label: it.variation_label,
+          variation_sku: it.variation_sku,
+          variation_price: it.variation_price,
           products: { name: productsMap.get(it.product_id)?.name ?? 'Unknown product' },
         }));
         return {
@@ -227,8 +230,11 @@ export default function OrdersManagement() {
                     <h4 className="font-medium">Items:</h4>
                     {order.order_items?.map((item: any, index: number) => (
                       <div key={index} className="flex justify-between text-sm">
-                        <span>{item.products?.name} x{item.quantity}</span>
-                        <span>{formatPrice(item.price_per_item)}</span>
+                        <span>
+                          {item.products?.name} x{item.quantity}
+                          {item.variation_label && ` • ${item.variation_label}`}
+                        </span>
+                        <span>{formatPrice(item.variation_price ?? item.price_per_item)}</span>
                       </div>
                     ))}
                   </div>
