@@ -2,10 +2,14 @@ import { AdminHeader } from '@/components/AdminHeader';
 import { AdminGuard } from '@/components/AdminGuard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useQuery } from '@tanstack/react-query';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export default function OrdersManagement() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { data: orders = [], isLoading, error } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
@@ -31,7 +35,7 @@ export default function OrdersManagement() {
 
       // 2) Fetch related data in parallel without relying on FKs
       const [profilesRes, orderItemsRes] = await Promise.all([
-        supabase.from('profiles').select('id, first_name, last_name, email').in('id', userIds as string[]),
+        supabase.from('profiles').select('id, first_name, last_name, email, phone').in('id', userIds as string[]),
         supabase.from('order_items').select('id, order_id, product_id, quantity, price_per_item, created_at').in('order_id', orderIds as string[]),
       ]);
 
@@ -75,7 +79,12 @@ export default function OrdersManagement() {
         return {
           ...o,
           profiles: profile
-            ? { first_name: profile.first_name, last_name: profile.last_name, email: profile.email }
+            ? { 
+                first_name: profile.first_name, 
+                last_name: profile.last_name, 
+                email: profile.email,
+                phone: profile.phone 
+              }
             : null,
           order_items: items,
         };
@@ -88,6 +97,32 @@ export default function OrdersManagement() {
 
   console.log('Orders in component:', orders, 'Loading:', isLoading, 'Error:', error);
 
+  const updateOrderStatus = useMutation({
+    mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      toast({
+        title: "Order Updated",
+        description: "Order status has been updated successfully.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to update order status.",
+        variant: "destructive",
+      });
+      console.error('Failed to update order status:', error);
+    },
+  });
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -98,6 +133,8 @@ export default function OrdersManagement() {
         return 'outline';
       case 'delivered':
         return 'default';
+      case 'cancelled':
+        return 'destructive';
       default:
         return 'secondary';
     }
@@ -127,15 +164,36 @@ export default function OrdersManagement() {
                       <p className="text-sm text-muted-foreground">
                         {order.profiles?.first_name} {order.profiles?.last_name} - {order.profiles?.email}
                       </p>
+                      {order.profiles?.phone && (
+                        <p className="text-sm text-muted-foreground">
+                          Phone: {order.profiles.phone}
+                        </p>
+                      )}
                       <p className="text-sm text-muted-foreground">
                         {new Date(order.created_at).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <Badge variant={getStatusColor(order.status)}>
-                        {order.status}
-                      </Badge>
-                      <p className="text-lg font-semibold mt-1">
+                      <div className="mb-2">
+                        <Select
+                          value={order.status}
+                          onValueChange={(newStatus) => 
+                            updateOrderStatus.mutate({ orderId: order.id, newStatus })
+                          }
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="processing">Processing</SelectItem>
+                            <SelectItem value="shipped">Shipped</SelectItem>
+                            <SelectItem value="delivered">Delivered</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <p className="text-lg font-semibold">
                         {formatPrice(order.total_amount)}
                       </p>
                     </div>
