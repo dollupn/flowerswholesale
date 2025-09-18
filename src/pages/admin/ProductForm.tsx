@@ -175,7 +175,7 @@ export default function ProductForm() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price (USD) *</Label>
+                    <Label htmlFor="price">Price (MUR) *</Label>
                     <Input
                       id="price"
                       type="number"
