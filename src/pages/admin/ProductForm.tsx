@@ -133,137 +133,119 @@ export default function ProductForm() {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-    const normalizedVariations: Array<{
-      label: string;
-      sku: string;
-      price: number;
-      quantity?: number;
-    }> = [];
+  // Build a validated, normalized variations array
+  const normalizedVariations: Array<{
+    label: string;
+    sku: string;
+    price: number;      // cents
+    quantity?: number;  // optional, positive integer
+  }> = [];
 
-    for (const variation of variationForms) {
-      const label = variation.label.trim();
-      const sku = variation.sku.trim();
-      const priceInput = variation.price.trim();
-      const quantityValue = variation.quantity.trim();
-      const isCompletelyEmpty = !label && !sku && !priceInput && !quantityValue;
+  for (const variation of variationForms) {
+    const label = variation.label.trim();
+    const sku = variation.sku.trim();
+    const priceInput = variation.price.trim();
+    const quantityInput = variation.quantity.trim();
 
-      if (isCompletelyEmpty) {
-        continue;
-      }
+    // Skip empty rows
+    const rowEmpty = !label && !sku && !priceInput && !quantityInput;
+    if (rowEmpty) continue;
 
-      const priceValue = Number.parseFloat(priceInput.replace(/,/g, ''));
-
-      if (!label || !sku) {
-        setLoading(false);
-        toast({
-          title: 'Invalid variation',
-          description: 'Each variation must include a label and SKU.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      if (!Number.isFinite(priceValue)) {
-        setLoading(false);
-        toast({
-          title: 'Invalid variation price',
-          description: 'Please provide a valid numeric price for each variation.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      const normalizedVariation: {
-        label: string;
-        sku: string;
-        price: number;
-        quantity?: number;
-      } = {
-        label,
-        sku,
-        price: Math.round(priceValue * 100),
-      };
-
-      if (quantityValue) {
-        const quantity = Number.parseInt(quantityValue, 10);
-
-        if (!Number.isFinite(quantity) || Number.isNaN(quantity) || quantity <= 0) {
-          setLoading(false);
-          toast({
-            title: 'Invalid variation quantity',
-            description: 'Variation quantities must be positive whole numbers.',
-            variant: 'destructive',
-          });
-          return;
-        }
-
-        normalizedVariation.quantity = quantity;
-      }
-
-      normalizedVariations.push(normalizedVariation);
-    }
-
-    const parsedPrice = Number.parseFloat(String(formData.price));
-    if (!Number.isFinite(parsedPrice) || Number.isNaN(parsedPrice)) {
+    // Basic required fields
+    if (!label || !sku) {
       setLoading(false);
       toast({
-        title: 'Invalid product price',
-        description: 'Please provide a valid base price for the product.',
+        title: 'Invalid variation',
+        description: 'Each variation must include a label and SKU.',
         variant: 'destructive',
       });
       return;
     }
 
-    const productData = {
-      ...formData,
-      price: Math.round(parsedPrice * 100), // Convert to cents
-      uses: usesInput.split(',').map(use => use.trim()).filter(Boolean),
-      gallery: galleryInput.split(',').map(url => url.trim()).filter(Boolean),
-      variations: normalizedVariations.length > 0 ? normalizedVariations : [],
-    };
-
-    try {
-      if (isEditing) {
-        const { error } = await supabase
-          .from('products')
-          .update(productData)
-          .eq('id', id);
-
-        if (error) throw error;
-
-        toast({
-          title: 'Success',
-          description: 'Product updated successfully',
-        });
-      } else {
-        const { error } = await supabase
-          .from('products')
-          .insert([productData]);
-
-        if (error) throw error;
-
-        toast({
-          title: 'Success',
-          description: 'Product created successfully',
-        });
-      }
-
-      navigate('/admin/products');
-    } catch (error) {
+    // Price -> cents
+    const priceFloat = Number.parseFloat(priceInput.replace(/,/g, ''));
+    if (!Number.isFinite(priceFloat)) {
+      setLoading(false);
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to save product',
+        title: 'Invalid variation price',
+        description: 'Please provide a valid numeric price for each variation.',
         variant: 'destructive',
       });
-      console.error('Product save error:', error);
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    const normalized: { label: string; sku: string; price: number; quantity?: number } = {
+      label,
+      sku,
+      price: Math.round(priceFloat * 100),
+    };
+
+    // Optional quantity (positive integer)
+    if (quantityInput) {
+      const q = Number.parseInt(quantityInput, 10);
+      if (!Number.isFinite(q) || Number.isNaN(q) || q <= 0) {
+        setLoading(false);
+        toast({
+          title: 'Invalid variation quantity',
+          description: 'Variation quantities must be positive whole numbers.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      normalized.quantity = q;
+    }
+
+    normalizedVariations.push(normalized);
+  }
+
+  // Validate base product price (to cents)
+  const parsedPrice = Number.parseFloat(String(formData.price));
+  if (!Number.isFinite(parsedPrice) || Number.isNaN(parsedPrice)) {
+    setLoading(false);
+    toast({
+      title: 'Invalid product price',
+      description: 'Please provide a valid base price for the product.',
+      variant: 'destructive',
+    });
+    return;
+  }
+
+  const productData = {
+    ...formData,
+    price: Math.round(parsedPrice * 100), // to cents
+    uses: usesInput.split(',').map(u => u.trim()).filter(Boolean),
+    gallery: galleryInput.split(',').map(u => u.trim()).filter(Boolean),
+    // Per PR intent: default to empty array when no valid options
+    variations: normalizedVariations.length > 0 ? normalizedVariations : [],
   };
+
+  try {
+    if (isEditing) {
+      const { error } = await supabase.from('products').update(productData).eq('id', id);
+      if (error) throw error;
+      toast({ title: 'Success', description: 'Product updated successfully' });
+    } else {
+      const { error } = await supabase.from('products').insert([productData]);
+      if (error) throw error;
+      toast({ title: 'Success', description: 'Product created successfully' });
+    }
+    navigate('/admin/products');
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description: error instanceof Error ? error.message : 'Failed to save product',
+      variant: 'destructive',
+    });
+    console.error('Product save error:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <AdminGuard>
