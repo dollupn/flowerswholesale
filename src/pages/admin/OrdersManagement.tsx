@@ -99,12 +99,17 @@ export default function OrdersManagement() {
 
   const updateOrderStatus = useMutation({
     mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .update({ status: newStatus })
-        .eq('id', orderId);
-      
+        .eq('id', orderId)
+        .select('id')
+        .maybeSingle();
+
       if (error) throw error;
+      if (!data) {
+        throw new Error('Order not found or insufficient permissions to update this order.');
+      }
     },
     onMutate: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
       await queryClient.cancelQueries({ queryKey: ['admin-orders'] });
