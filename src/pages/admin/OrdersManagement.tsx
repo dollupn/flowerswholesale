@@ -42,6 +42,8 @@ export default function OrdersManagement() {
     }
   };
 
+  const formatPrice = (priceInCents: number) => `Rs ${(priceInCents / 100).toFixed(2)}`;
+
   return (
     <AdminGuard>
       <div className="min-h-screen bg-background">
@@ -73,7 +75,7 @@ export default function OrdersManagement() {
                         {order.status}
                       </Badge>
                       <p className="text-lg font-semibold mt-1">
-                        ${(order.total_amount / 100).toFixed(2)}
+                        {formatPrice(order.total_amount)}
                       </p>
                     </div>
                   </div>
@@ -84,7 +86,7 @@ export default function OrdersManagement() {
                     {order.order_items?.map((item: any, index: number) => (
                       <div key={index} className="flex justify-between text-sm">
                         <span>{item.products?.name} x{item.quantity}</span>
-                        <span>${(item.price_per_item / 100).toFixed(2)}</span>
+                        <span>{formatPrice(item.price_per_item)}</span>
                       </div>
                     ))}
                   </div>
