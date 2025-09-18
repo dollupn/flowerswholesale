@@ -1,7 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Star, Truck, Shield, Award } from "lucide-react";
+import {
+  ShoppingCart,
+  Star,
+  Truck,
+  Shield,
+  Award,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
@@ -11,6 +19,7 @@ import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const Index = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentRecipe, setCurrentRecipe] = useState(0);
   const { data: featuredProducts = [], isLoading } = useFeaturedProducts();
 
   const testimonials = [
@@ -34,6 +43,8 @@ const Index = () => {
     }
   ];
 
+  const testimonialCount = testimonials.length;
+
   const features = [
     {
       icon: Award,
@@ -52,78 +63,117 @@ const Index = () => {
     }
   ];
 
+  const recipes = [
+    {
+      title: "Vanilla Bean Crème Brûlée",
+      description:
+        "A silky custard infused with Madagascar vanilla, finished with a caramelised sugar crust.",
+      image:
+        "https://images.unsplash.com/photo-1541959833400-049d37f98ccd?auto=format&fit=crop&w=800&q=80",
+      prepTime: "45 mins",
+      serves: "Serves 4"
+    },
+    {
+      title: "Mauritian Vanilla Gateau",
+      description:
+        "A moist butter cake layered with vanilla bean pastry cream and toasted coconut flakes.",
+      image:
+        "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=800&q=80",
+      prepTime: "1 hr 10 mins",
+      serves: "Serves 8"
+    },
+    {
+      title: "Vanilla & Spice Iced Latte",
+      description:
+        "Cold-brew coffee sweetened with vanilla bean syrup and a touch of island spices for a refreshing treat.",
+      image:
+        "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=800&q=80",
+      prepTime: "15 mins",
+      serves: "Serves 2"
+    }
+  ];
+
+  const recipeCount = recipes.length;
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      setCurrentTestimonial((prev) => (prev + 1) % testimonialCount);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonialCount]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentRecipe((prev) => (prev + 1) % recipeCount);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [recipeCount]);
 
   return (
     <div className="mobile-safe-bottom">
       <Header />
       
       {/* Hero Section (full background video) */}
-<section className="relative min-h-[85vh] flex items-center overflow-hidden">
-  {/* Background video */}
-  <video
-    src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="metadata"
-    poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg" // optional
-    className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
-  />
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+        {/* Background video */}
+        <video
+          src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg" // optional
+          className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
+        />
 
-  {/* Readability overlay (tweak gradient/opacity if needed) */}
-  <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
+        {/* Readability overlay (tweak gradient/opacity if needed) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
 
-  {/* Content on top */}
-  <div className="relative z-10 container mx-auto px-4 py-12">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div className="animate-fade-in">
-        <h1 className="text-4xl md:text-6xl font-serif font-bold text-vanilla-brown mb-6">
-          Pure Madagascar
-          <span className="block text-vanilla-brown/80">Vanilla</span>
-        </h1>
-        <p className="text-xl text-vanilla-brown/80 mb-8 leading-relaxed">
-          Delivered with Elegance to Mauritius. Experience the authentic taste of
-          premium vanilla beans, sourced directly from Madagascar&apos;s finest farms.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button
-            asChild
-            size="lg"
-            className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8"
-          >
-            <Link to="/shop">
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              Shop Now
-            </Link>
-          </Button>
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
-          >
-            <Link to="/about">Learn Our Story</Link>
-          </Button>
+        {/* Content on top */}
+        <div className="relative z-10 container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="animate-fade-in">
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-vanilla-brown mb-6">
+                Pure Madagascar
+                <span className="block text-vanilla-brown/80">Vanilla</span>
+              </h1>
+              <p className="text-xl text-vanilla-brown/80 mb-8 leading-relaxed">
+                Delivered with Elegance to Mauritius. Experience the authentic taste of
+                premium vanilla beans, sourced directly from Madagascar&apos;s finest farms.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8"
+                >
+                  <Link to="/shop">
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Shop Now
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
+                >
+                  <Link to="/about">Learn Our Story</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Optional floating badge on the right side of hero */}
+            <div className="hidden lg:block relative">
+              <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
+                <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
+                <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Optional floating badge on the right side of hero */}
-      <div className="hidden lg:block relative">
-        <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
-          <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
-          <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
 
       {/* Featured Products */}
@@ -195,6 +245,104 @@ const Index = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Vanilla Recipe Carousel */}
+      <section className="py-16 bg-vanilla-cream">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
+              Vanilla Recipes
+            </h2>
+            <p className="text-vanilla-brown/70 max-w-2xl mx-auto">
+              Explore decadent ways to savour our Madagascar vanilla with easy-to-follow recipes.
+            </p>
+          </div>
+
+          <div className="relative max-w-5xl mx-auto">
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentRecipe((prev) => (prev - 1 + recipes.length) % recipes.length)
+              }
+              className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
+              aria-label="Previous recipe"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCurrentRecipe((prev) => (prev + 1) % recipes.length)}
+              className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
+              aria-label="Next recipe"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
+              <CardContent className="p-6 md:p-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  <div className="overflow-hidden rounded-2xl shadow-md">
+                    <img
+                      src={recipes[currentRecipe].image}
+                      alt={recipes[currentRecipe].title}
+                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="space-y-5">
+                    <div>
+                      <span className="inline-block uppercase tracking-widest text-xs text-vanilla-brown/60 mb-2">
+                        Featured Recipe
+                      </span>
+                      <h3 className="text-2xl md:text-3xl font-serif font-semibold text-vanilla-brown mb-3">
+                        {recipes[currentRecipe].title}
+                      </h3>
+                      <p className="text-vanilla-brown/70 leading-relaxed">
+                        {recipes[currentRecipe].description}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 text-sm font-medium text-vanilla-brown">
+                      <span className="bg-vanilla-yellow/30 px-3 py-1 rounded-full">
+                        {recipes[currentRecipe].prepTime}
+                      </span>
+                      <span className="bg-vanilla-yellow/30 px-3 py-1 rounded-full">
+                        {recipes[currentRecipe].serves}
+                      </span>
+                      <span className="bg-vanilla-yellow/30 px-3 py-1 rounded-full">
+                        Madagascar Vanilla
+                      </span>
+                    </div>
+
+                    <div className="text-sm text-vanilla-brown/60">
+                      <p className="font-semibold text-vanilla-brown">Chef's Tip</p>
+                      <p>
+                        Split the vanilla bean lengthwise and scrape out the seeds to infuse the richest flavour
+                        into your dessert.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center mt-6 space-x-2">
+              {recipes.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setCurrentRecipe(index)}
+                  className={`h-2.5 w-8 rounded-full transition-colors ${
+                    currentRecipe === index ? "bg-vanilla-brown" : "bg-vanilla-brown/30"
+                  }`}
+                  aria-label={`View recipe ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
