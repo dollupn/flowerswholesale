@@ -36,15 +36,15 @@ const FAQ = () => {
       faqs: [
         {
           question: "Do you deliver across Mauritius?",
-          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 500. Same-day delivery available in Port Louis area, and next-day delivery for other regions."
+          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 1000. Same-day delivery available in Port Louis area, and next-day delivery for other regions."
         },
         {
           question: "How is vanilla packaged for shipping?",
-          answer: "All vanilla products are vacuum-sealed and packaged in food-grade containers to maintain freshness. Beans are individually wrapped, and extracts are securely packaged to prevent breakage during transit."
+          answer: "All vanilla products are vacuum-sealed and packaged in food-grade containers to maintain freshness. Orders of 3, 5, or 10 vanilla beans are carefully placed in a premium glass tube, while extracts are securely packaged to prevent breakage during transit."
         },
         {
           question: "What are your delivery charges?",
-          answer: "Delivery charges: Port Louis area - Rs 50, Other regions - Rs 100. FREE delivery for orders over Rs 500. Express same-day delivery available for Rs 150 additional."
+          answer: "Delivery charges: Postage - Rs 60, Home Delivery - Rs 150, Pickup at Pereybere - Free. Delivery is free for orders over Rs 1000, and we continue to offer express same-day delivery in the Port Louis area."
         },
         {
           question: "Can I track my order?",
