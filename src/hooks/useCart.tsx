@@ -31,7 +31,7 @@ export function useCart() {
         .from('cart_items')
         .select(`
           *,
-          product:products(*)
+          product:products!cart_items_product_id_fkey(*)
         `)
         .eq('user_id', user.id);
 
