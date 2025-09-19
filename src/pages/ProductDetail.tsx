@@ -44,6 +44,7 @@ const ProductDetail = () => {
       return;
     }
 
+    // Auto-select first variation if available for display purposes only
     if (variations && variations.length > 0) {
       setSelectedVariationSku(prev =>
         prev && variations.some(variation => variation.sku === prev)
@@ -56,6 +57,8 @@ const ProductDetail = () => {
   }, [product, variations]);
 
   const handleAddToCart = () => {
+    console.log('Add to cart clicked', { product: product?.id, quantity, user: user?.id });
+    
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -67,24 +70,13 @@ const ProductDetail = () => {
 
     if (!product) return;
 
-    if (variations && variations.length > 0) {
-      if (!selectedVariation) {
-        toast({
-          title: "Select a Variation",
-          description: "Please choose a quantity option before adding to your cart.",
-          variant: "destructive",
-        });
-        return;
-      }
-
+    console.log('About to call addToCart with:', { productId: product.id, quantity });
+    
+    // Simply add the product without variation requirement
     addToCart({
       productId: product.id,
       quantity,
     });
-      return;
-    }
-
-    addToCart({ productId: product.id, quantity });
   };
 
   const handleWhatsAppInquiry = () => {
@@ -250,7 +242,8 @@ const ProductDetail = () => {
 
               {variations && variations.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-serif font-semibold text-vanilla-brown mb-3">Select Quantity</h3>
+                  <h3 className="font-serif font-semibold text-vanilla-brown mb-2">Available Options</h3>
+                  <p className="text-sm text-vanilla-brown/70 mb-3">Choose your preferred quantity option:</p>
                   <RadioGroup
                     value={selectedVariationSku ?? ''}
                     onValueChange={value => setSelectedVariationSku(value)}

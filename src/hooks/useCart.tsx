@@ -43,6 +43,8 @@ export function useCart() {
       productId: string;
       quantity?: number;
     }) => {
+      console.log('Cart mutation called with:', { productId, quantity, userId: user?.id });
+      
       if (!user) throw new Error('User not authenticated');
 
       // Check if item already exists in cart
@@ -53,16 +55,23 @@ export function useCart() {
         .eq('product_id', productId)
         .maybeSingle();
 
+      console.log('Existing item check result:', existingItem);
+
       if (existingItem) {
         // Update quantity
+        console.log('Updating existing item quantity:', existingItem.quantity + quantity);
         const { error } = await supabase
           .from('cart_items')
           .update({ quantity: existingItem.quantity + quantity })
           .eq('id', existingItem.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
       } else {
         // Insert new item
+        console.log('Inserting new cart item');
         const { error } = await supabase
           .from('cart_items')
           .insert({
@@ -71,7 +80,10 @@ export function useCart() {
             quantity,
           });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
       }
     },
     onSuccess: () => {
