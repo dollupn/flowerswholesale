@@ -36,7 +36,7 @@ const FAQ = () => {
       faqs: [
         {
           question: "Do you deliver across Mauritius?",
-          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 1000. Same-day delivery available in Port Louis area, and next-day delivery for other regions."
+          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 1000. Same-day delivery available in Grand Bay area, and next-day delivery for other regions."
         },
         {
           question: "How is vanilla packaged for shipping?",
@@ -44,7 +44,7 @@ const FAQ = () => {
         },
         {
           question: "What are your delivery charges?",
-          answer: "Delivery charges: Postage - Rs 60, Home Delivery - Rs 150, Pickup at Pereybere - Free. Delivery is free for orders over Rs 1000, and we continue to offer express same-day delivery in the Port Louis area."
+          answer: "Delivery charges: Postage - Rs 60, Home Delivery - Rs 150, Pickup at Pereybere - Free. Delivery is free for orders over Rs 1000, and we continue to offer express same-day delivery in the Grand Bay area."
         },
         {
           question: "Can I track my order?",
