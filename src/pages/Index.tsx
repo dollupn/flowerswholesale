@@ -67,8 +67,7 @@ const Index = () => {
       title: "Vanilla Bean Crème Brûlée",
       description:
         "A silky custard infused with Madagascar vanilla, finished with a caramelised sugar crust.",
-      image:
-        "https://images.unsplash.com/photo-1541959833400-049d37f98ccd?auto=format&fit=crop&w=1200&q=80",
+      image: "/lovable-uploads/creme.webp",
       prepTime: "45 mins",
       serves: "Serves 4",
       path: "/recipes/vanilla-bean-creme-brulee"
@@ -77,8 +76,7 @@ const Index = () => {
       title: "Mauritian Vanilla Gateau",
       description:
         "A moist butter cake layered with vanilla bean pastry cream and toasted coconut flakes.",
-      image:
-        "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=1200&q=80",
+      image: "/lovable-uploads/cake.webp",
       prepTime: "1 hr 10 mins",
       serves: "Serves 8",
       path: "/recipes/mauritian-vanilla-gateau"
