@@ -74,7 +74,7 @@ const About = () => {
               </div>
               <div>
                 <img
-                  src="public/lovable-uploads/farm.webp?w=600"
+                  src="/lovable-uploads/farm.webp?w=600"
                   alt="Madagascar vanilla farm"
                   className="w-full h-auto rounded-2xl luxury-shadow"
                 />
@@ -153,7 +153,7 @@ const About = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <img
-                  src="public/lovable-uploads/process.webp?w=600"
+                  src="/lovable-uploads/process.webp?w=600"
                   alt="Vanilla processing"
                   className="w-full h-auto rounded-2xl luxury-shadow"
                 />
