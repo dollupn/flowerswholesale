@@ -219,12 +219,16 @@ function CheckoutPage() {
         payment: {
           method: formData.paymentMethod
         },
-        cart: cartItems.map(item => ({
-          sku: item.product_id,
-          name: item.product.name,
-          qty: item.quantity,
-          unitPrice: item.product.price / 100,
-        })),
+        cart: cartItems.map(item => {
+          const unitPrice = item.variation_price ?? item.product.price;
+          return {
+            sku: item.variation_sku ?? item.product_id,
+            name: item.product.name,
+            qty: item.quantity,
+            unitPrice: unitPrice / 100,
+            variation: item.variation_label ?? undefined,
+          };
+        }),
         totals: {
           subtotal: totalPrice / 100,
           shipping: getShippingFee() / 100,
@@ -263,7 +267,10 @@ function CheckoutPage() {
         order_id: order.id,
         product_id: item.product_id,
         quantity: item.quantity,
-        price_per_item: item.product.price,
+        price_per_item: item.variation_price ?? item.product.price,
+        variation_sku: item.variation_sku,
+        variation_label: item.variation_label,
+        variation_price: item.variation_price,
       }));
 
       const { error: itemsError } = await supabase
