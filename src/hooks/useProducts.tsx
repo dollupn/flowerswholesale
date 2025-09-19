@@ -1,24 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
-import { parseProductVariations, ProductVariation, ProductVariationRow } from '@/lib/product';
+import {
+  parseProductVariations,
+  ProductVariation,
+  ProductVariationRow,
+} from '@/lib/product';
 
 type ProductRow = Database['public']['Tables']['products']['Row'];
 type ProductQueryRow = ProductRow & {
   product_variations?: ProductVariationRow[] | null;
 };
+
 type Product = ProductRow & { variations: ProductVariation[] | null };
+export type ProductWithVariations = Product;
 
 const mapProduct = (product: ProductQueryRow): Product => {
   const { product_variations, ...baseProduct } = product;
-
   return {
     ...baseProduct,
+    // Prefer related rows if present; fallback to JSON on the product row
     variations: parseProductVariations(product_variations ?? baseProduct.variations),
   };
 };
-
-export type ProductWithVariations = Product;
 
 export function useProducts() {
   return useQuery<ProductWithVariations[]>({
@@ -31,7 +35,7 @@ export function useProducts() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((product) => mapProduct(product as ProductQueryRow));
+      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
     },
   });
 }
@@ -46,7 +50,7 @@ export function useAllProducts() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((product) => mapProduct(product as ProductQueryRow));
+      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
     },
   });
 }
@@ -63,7 +67,7 @@ export function useFeaturedProducts() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((product) => mapProduct(product as ProductQueryRow));
+      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
     },
   });
 }
@@ -99,9 +103,8 @@ export function useProductsByCategory(category?: string) {
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
-
       if (error) throw error;
-      return (data ?? []).map((product) => mapProduct(product as ProductQueryRow));
+      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
     },
     enabled: category !== undefined,
   });

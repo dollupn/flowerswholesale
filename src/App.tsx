@@ -24,6 +24,9 @@ import ProductForm from "./pages/admin/ProductForm";
 import OrdersManagement from "./pages/admin/OrdersManagement";
 import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
+import VanillaBeanCremeBrulee from "./pages/recipes/VanillaBeanCremeBrulee";
+import MauritianVanillaGateau from "./pages/recipes/MauritianVanillaGateau";
+import VanillaSpiceIcedLatte from "./pages/recipes/VanillaSpiceIcedLatte";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +50,9 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/recipes/vanilla-bean-creme-brulee" element={<VanillaBeanCremeBrulee />} />
+            <Route path="/recipes/mauritian-vanilla-gateau" element={<MauritianVanillaGateau />} />
+            <Route path="/recipes/vanilla-spice-iced-latte" element={<VanillaSpiceIcedLatte />} />
             <Route path="/admin/setup" element={<AdminSetup />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<ProductsManagement />} />

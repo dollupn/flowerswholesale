@@ -1,8 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { Instagram } from "lucide-react";
+import { Facebook, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const Footer = () => {
   const handleWhatsApp = () => {
@@ -10,7 +9,11 @@ const Footer = () => {
   };
 
   const handleInstagram = () => {
-    window.open("https://instagram.com/vanilluxe", "_blank");
+    window.open("https://instagram.com/vanilluxemu", "_blank");
+  };
+
+  const handleFacebook = () => {
+    window.open("https://facebook.com/vanilluxemu", "_blank");
   };
 
   return (
@@ -31,24 +34,9 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-vanilla-cream/80 mb-6 max-w-md">
-              Premium Madagascar vanilla products sourced directly from farmers. 
+              Premium Madagascar vanilla products sourced directly from farmers.
               Experience the authentic taste of pure vanilla in Mauritius.
             </p>
-            
-            {/* Newsletter Signup */}
-            <div>
-              <h4 className="font-semibold mb-3">Stay Updated</h4>
-              <div className="flex flex-col sm:flex-row gap-2 max-w-md">
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="bg-vanilla-cream/10 border-vanilla-cream/20 text-vanilla-cream placeholder:text-vanilla-cream/60"
-                />
-                <Button className="bg-vanilla-yellow text-vanilla-brown hover:bg-vanilla-yellow/90">
-                  Subscribe
-                </Button>
-              </div>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -66,19 +54,25 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Connect With Us</h4>
             <div className="space-y-3">
-              <Button 
+              <Button
                 onClick={handleWhatsApp}
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 WhatsApp Us
               </Button>
-              <Button 
+              <Button
                 onClick={handleInstagram}
-                variant="outline" 
-                className="w-full border-vanilla-cream/20 text-vanilla-cream hover:bg-vanilla-cream/10"
+                className="w-full bg-gradient-to-r from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white hover:opacity-90"
               >
                 <Instagram className="w-4 h-4 mr-2" />
                 Follow on Instagram
+              </Button>
+              <Button
+                onClick={handleFacebook}
+                className="w-full bg-[#1877F2] hover:bg-[#0b5bd3] text-white"
+              >
+                <Facebook className="w-4 h-4 mr-2" />
+                Follow on Facebook
               </Button>
             </div>
             <div className="mt-4 text-sm text-vanilla-cream/80">
@@ -89,7 +83,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-vanilla-cream/20 mt-8 pt-6 text-center text-sm text-vanilla-cream/60">
-          <p>&copy; 2024 Vanilluxe. All rights reserved. | Premium Madagascar Vanilla in Mauritius</p>
+          <p>&copy; 2025 Vanilluxe. All rights reserved. | Premium Madagascar Vanilla in Mauritius</p>
         </div>
       </div>
     </footer>

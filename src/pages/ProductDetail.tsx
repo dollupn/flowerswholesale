@@ -162,7 +162,7 @@ const ProductDetail = () => {
                 <img
                   src={product.gallery?.[selectedImage] || product.image_url || 'https://images.unsplash.com/photo-1586049332816-6de5d1e8e38b?w=500'}
                   alt={product.name}
-                  className="w-full h-96 object-cover rounded-xl luxury-shadow"
+                  className="w-full h-[26rem] md:h-[32rem] object-cover rounded-xl luxury-shadow"
                 />
               </div>
               {product.gallery && product.gallery.length > 1 && (
