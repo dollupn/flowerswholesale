@@ -23,7 +23,7 @@ const MauritianVanillaGateau = () => {
           <div className="container mx-auto grid gap-12 px-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div className="overflow-hidden rounded-3xl shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=1200&q=80"
+                src="/lovable-uploads/cake.webp?auto=format&fit=crop&w=1200&q=80"
                 alt="Mauritian Vanilla Gateau"
                 className="h-full w-full object-cover"
                 loading="lazy"
