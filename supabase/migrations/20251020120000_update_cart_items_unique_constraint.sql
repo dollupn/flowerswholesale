@@ -2,7 +2,20 @@
 ALTER TABLE public.cart_items
   DROP CONSTRAINT IF EXISTS cart_items_user_id_product_id_key;
 
-DROP INDEX IF EXISTS cart_items_user_id_product_id_variation_idx;
+-- Clean up any legacy constraints / indexes
+ALTER TABLE public.cart_items
+  DROP CONSTRAINT IF EXISTS cart_items_user_product_variation_unique;
 
-CREATE UNIQUE INDEX cart_items_user_id_product_id_variation_idx
-  ON public.cart_items (user_id, product_id, COALESCE(variation_sku, ''));
+DROP INDEX IF EXISTS cart_items_user_id_product_id_variation_idx;
+DROP INDEX IF EXISTS cart_items_user_product_null_variation_idx;
+
+-- Ensure each (user, product, variation) combination is unique,
+-- while still enforcing a single row for non-variant products.
+ALTER TABLE public.cart_items
+  ADD CONSTRAINT cart_items_user_product_variation_unique
+  UNIQUE (user_id, product_id, variation_sku);
+
+-- For non-variant products (variation_sku IS NULL): 1 row per (user, product)
+CREATE UNIQUE INDEX cart_items_user_product_null_variation_idx
+  ON public.cart_items (user_id, product_id)
+  WHERE variation_sku IS NULL;
