@@ -20,9 +20,6 @@ export type Database = {
           id: string
           product_id: string
           quantity: number
-          variation_label: string | null
-          variation_price: number | null
-          variation_sku: string | null
           updated_at: string | null
           user_id: string
         }
@@ -31,9 +28,6 @@ export type Database = {
           id?: string
           product_id: string
           quantity: number
-          variation_label?: string | null
-          variation_price?: number | null
-          variation_sku?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -42,9 +36,6 @@ export type Database = {
           id?: string
           product_id?: string
           quantity?: number
-          variation_label?: string | null
-          variation_price?: number | null
-          variation_sku?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -66,9 +57,6 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
-          variation_label: string | null
-          variation_price: number | null
-          variation_sku: string | null
         }
         Insert: {
           created_at?: string | null
@@ -77,9 +65,6 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
-          variation_label?: string | null
-          variation_price?: number | null
-          variation_sku?: string | null
         }
         Update: {
           created_at?: string | null
@@ -88,9 +73,6 @@ export type Database = {
           price_per_item?: number
           product_id?: string
           quantity?: number
-          variation_label?: string | null
-          variation_price?: number | null
-          variation_sku?: string | null
         }
         Relationships: [
           {
@@ -139,44 +121,6 @@ export type Database = {
         }
         Relationships: []
       }
-      product_variations: {
-        Row: {
-          created_at: string | null
-          id: string
-          label: string
-          price: number
-          product_id: string
-          quantity: number | null
-          sku: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          label: string
-          price: number
-          product_id: string
-          quantity?: number | null
-          sku: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          label?: string
-          price?: number
-          product_id?: string
-          quantity?: number | null
-          sku?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_variations_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
           category: string | null
@@ -195,8 +139,8 @@ export type Database = {
           processing: string | null
           storage: string | null
           updated_at: string | null
-          variations: Json | null
           uses: string[] | null
+          variations: Json | null
         }
         Insert: {
           category?: string | null
@@ -215,8 +159,8 @@ export type Database = {
           processing?: string | null
           storage?: string | null
           updated_at?: string | null
-          variations?: Json | null
           uses?: string[] | null
+          variations?: Json | null
         }
         Update: {
           category?: string | null
@@ -235,8 +179,8 @@ export type Database = {
           processing?: string | null
           storage?: string | null
           updated_at?: string | null
-          variations?: Json | null
           uses?: string[] | null
+          variations?: Json | null
         }
         Relationships: []
       }

@@ -77,15 +77,10 @@ const ProductDetail = () => {
         return;
       }
 
-      addToCart({
-        productId: product.id,
-        quantity,
-        variation: {
-          sku: selectedVariation.sku,
-          label: selectedVariation.label,
-          price: selectedVariation.price,
-        },
-      });
+    addToCart({
+      productId: product.id,
+      quantity,
+    });
       return;
     }
 

@@ -11,12 +11,6 @@ interface CartItemWithProduct extends CartItem {
   product: Product;
 }
 
-interface CartItemVariationInput {
-  sku: string;
-  label: string;
-  price: number;
-}
-
 export function useCart() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -45,28 +39,19 @@ export function useCart() {
     mutationFn: async ({
       productId,
       quantity = 1,
-      variation,
     }: {
       productId: string;
       quantity?: number;
-      variation?: CartItemVariationInput;
     }) => {
       if (!user) throw new Error('User not authenticated');
 
       // Check if item already exists in cart
-      let existingItemQuery = supabase
+      const { data: existingItem } = await supabase
         .from('cart_items')
         .select('*')
         .eq('user_id', user.id)
-        .eq('product_id', productId);
-
-      if (variation?.sku) {
-        existingItemQuery = existingItemQuery.eq('variation_sku', variation.sku);
-      } else {
-        existingItemQuery = existingItemQuery.is('variation_sku', null);
-      }
-
-      const { data: existingItem } = await existingItemQuery.maybeSingle();
+        .eq('product_id', productId)
+        .maybeSingle();
 
       if (existingItem) {
         // Update quantity
@@ -84,9 +69,6 @@ export function useCart() {
             user_id: user.id,
             product_id: productId,
             quantity,
-            variation_label: variation?.label ?? null,
-            variation_sku: variation?.sku ?? null,
-            variation_price: variation?.price ?? null,
           });
 
         if (error) throw error;
@@ -192,8 +174,7 @@ export function useCart() {
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cartItems.reduce((sum, item) => {
-    const unitPrice = item.variation_price ?? item.product.price;
-    return sum + unitPrice * item.quantity;
+    return sum + item.product.price * item.quantity;
   }, 0);
 
   return {

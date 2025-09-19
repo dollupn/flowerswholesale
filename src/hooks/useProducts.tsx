@@ -4,23 +4,17 @@ import { Database } from '@/integrations/supabase/types';
 import {
   parseProductVariations,
   ProductVariation,
-  ProductVariationRow,
 } from '@/lib/product';
 
 type ProductRow = Database['public']['Tables']['products']['Row'];
-type ProductQueryRow = ProductRow & {
-  product_variations?: ProductVariationRow[] | null;
-};
 
-type Product = Omit<ProductRow, 'variations'> & { variations: ProductVariation[] | null };
+type Product = ProductRow & { variations: ProductVariation[] | null };
 export type ProductWithVariations = Product;
 
-const mapProduct = (product: ProductQueryRow): Product => {
-  const { product_variations, ...baseProduct } = product;
+const mapProduct = (product: ProductRow): Product => {
   return {
-    ...baseProduct,
-    // Prefer related rows if present; fallback to JSON on the product row
-    variations: parseProductVariations(product_variations ?? baseProduct.variations),
+    ...product,
+    variations: parseProductVariations(product.variations),
   };
 };
 
@@ -30,12 +24,12 @@ export function useProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_variations(*)')
+        .select('*')
         .eq('in_stock', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
+      return (data ?? []).map(mapProduct);
     },
   });
 }
@@ -46,11 +40,11 @@ export function useAllProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_variations(*)')
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
+      return (data ?? []).map(mapProduct);
     },
   });
 }
@@ -61,13 +55,13 @@ export function useFeaturedProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_variations(*)')
+        .select('*')
         .eq('featured', true)
         .eq('in_stock', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
+      return (data ?? []).map(mapProduct);
     },
   });
 }
@@ -78,12 +72,12 @@ export function useProduct(id: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('*, product_variations(*)')
+        .select('*')
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      return data ? mapProduct(data as ProductQueryRow) : null;
+      return data ? mapProduct(data) : null;
     },
     enabled: !!id,
   });
@@ -95,7 +89,7 @@ export function useProductsByCategory(category?: string) {
     queryFn: async () => {
       let query = supabase
         .from('products')
-        .select('*, product_variations(*)')
+        .select('*')
         .eq('in_stock', true);
 
       if (category) {
@@ -104,7 +98,7 @@ export function useProductsByCategory(category?: string) {
 
       const { data, error } = await query.order('created_at', { ascending: false });
       if (error) throw error;
-      return (data ?? []).map((p) => mapProduct(p as ProductQueryRow));
+      return (data ?? []).map(mapProduct);
     },
     enabled: category !== undefined,
   });

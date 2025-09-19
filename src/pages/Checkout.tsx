@@ -220,17 +220,10 @@ function CheckoutPage() {
           method: formData.paymentMethod
         },
         cart: cartItems.map(item => ({
-          sku: item.variation_sku || item.product_id,
+          sku: item.product_id,
           name: item.product.name,
           qty: item.quantity,
-          unitPrice: (item.variation_price ?? item.product.price) / 100,
-          variation: item.variation_label
-            ? {
-                label: item.variation_label,
-                sku: item.variation_sku,
-                price: (item.variation_price ?? item.product.price) / 100,
-              }
-            : undefined,
+          unitPrice: item.product.price / 100,
         })),
         totals: {
           subtotal: totalPrice / 100,
@@ -270,10 +263,7 @@ function CheckoutPage() {
         order_id: order.id,
         product_id: item.product_id,
         quantity: item.quantity,
-        price_per_item: item.variation_price ?? item.product.price,
-        variation_label: item.variation_label,
-        variation_sku: item.variation_sku,
-        variation_price: item.variation_price ?? item.product.price,
+        price_per_item: item.product.price,
       }));
 
       const { error: itemsError } = await supabase
@@ -531,18 +521,12 @@ function CheckoutPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {cartItems.map((item) => {
-                  const unitPrice = item.variation_price ?? item.product.price;
+                  const unitPrice = item.product.price;
 
                   return (
                     <div key={item.id} className="flex justify-between items-center">
                       <div className="flex-1">
                         <p className="font-semibold text-vanilla-brown">{item.product.name}</p>
-                        {item.variation_label && (
-                          <p className="text-xs text-vanilla-brown/70">
-                            {item.variation_label}
-                            {item.variation_sku && ` • SKU: ${item.variation_sku}`}
-                          </p>
-                        )}
                         <p className="text-sm text-vanilla-brown/60">Qty: {item.quantity}</p>
                       </div>
                       <p className="font-semibold text-vanilla-brown">
