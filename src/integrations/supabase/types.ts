@@ -21,6 +21,9 @@ export type Database = {
           product_id: string
           quantity: number
           updated_at: string | null
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
           user_id: string
         }
         Insert: {
@@ -29,6 +32,9 @@ export type Database = {
           product_id: string
           quantity: number
           updated_at?: string | null
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
           user_id: string
         }
         Update: {
@@ -37,6 +43,9 @@ export type Database = {
           product_id?: string
           quantity?: number
           updated_at?: string | null
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
           user_id?: string
         }
         Relationships: [
@@ -57,6 +66,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
         }
         Insert: {
           created_at?: string | null
@@ -65,6 +77,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Update: {
           created_at?: string | null
@@ -73,6 +88,9 @@ export type Database = {
           price_per_item?: number
           product_id?: string
           quantity?: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Relationships: [
           {
