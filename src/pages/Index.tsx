@@ -259,19 +259,19 @@ const Index = () => {
               onClick={() =>
                 setCurrentRecipe((prev) => (prev - 1 + recipes.length) % recipes.length)
               }
-              className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
+              className="absolute left-2 md:-left-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-2 md:p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition z-10"
               aria-label="Previous recipe"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
             </button>
 
             <button
               type="button"
               onClick={() => setCurrentRecipe((prev) => (prev + 1) % recipes.length)}
-              className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition"
+              className="absolute right-2 md:-right-12 top-1/2 -translate-y-1/2 bg-vanilla-brown text-vanilla-cream p-2 md:p-3 rounded-full shadow-lg hover:bg-vanilla-brown/90 transition z-10"
               aria-label="Next recipe"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
             </button>
 
             <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">

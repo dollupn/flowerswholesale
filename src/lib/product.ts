@@ -7,6 +7,7 @@ export interface ProductVariation {
   sku: string;
   price: number;
   quantity?: number | null;
+  [key: string]: any;
 }
 
 export const parseProductVariations = (
@@ -49,7 +50,7 @@ export const parseProductVariations = (
 
       return null;
     })
-    .filter((variation): variation is ProductVariation => variation !== null);
+    .filter((variation): variation is NonNullable<typeof variation> => variation !== null);
 };
 
 export const getProductBasePrice = (product: ProductRow): number => {

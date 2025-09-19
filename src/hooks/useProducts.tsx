@@ -8,7 +8,7 @@ type Product = ProductRow & { variations: ProductVariation[] | null };
 
 const mapProduct = (product: ProductRow): Product => ({
   ...product,
-  variations: parseProductVariations(product.variations),
+  variations: parseProductVariations(product.variations) as ProductVariation[] | null,
 });
 
 export type ProductWithVariations = Product;
