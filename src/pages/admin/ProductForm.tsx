@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { AdminHeader } from '@/components/AdminHeader';
 import { AdminGuard } from '@/components/AdminGuard';
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,12 @@ import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { parseProductVariations } from '@/lib/product';
 
 interface ProductFormData {
   name: string;
   description: string;
-  price: number;
+  price: number;            // MUR (displayed in rupees)
   category: string;
   image_url: string;
   gallery: string[];
@@ -32,11 +31,11 @@ interface ProductFormData {
 }
 
 interface VariationForm {
-  id: string;
+  id: string;               // local row id for the form
   label: string;
   sku: string;
-  quantity: string;
-  price: string;
+  quantity: string;         // input as string; validated -> number
+  price: string;            // input in MUR; validated -> cents
 }
 
 export default function ProductForm() {
@@ -79,28 +78,25 @@ export default function ProductForm() {
     setVariationForms(prev => [...prev, createVariationForm()]);
   };
 
-  const updateVariation = (id: string, field: keyof Omit<VariationForm, 'id'>, value: string) => {
-    setVariationForms(prev => prev.map(variation => (
-      variation.id === id ? { ...variation, [field]: value } : variation
-    )));
+  const updateVariation = (rowId: string, field: keyof Omit<VariationForm, 'id'>, value: string) => {
+    setVariationForms(prev =>
+      prev.map(v => (v.id === rowId ? { ...v, [field]: value } as VariationForm : v)),
+    );
   };
 
-  const removeVariation = (id: string) => {
-    setVariationForms(prev => prev.filter(variation => variation.id !== id));
+  const removeVariation = (rowId: string) => {
+    setVariationForms(prev => prev.filter(v => v.id !== rowId));
   };
 
   useEffect(() => {
     if (isEditing && id) {
       loadProduct(id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isEditing]);
 
   const loadProduct = async (productId: string) => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', productId)
-      .single();
+    const { data, error } = await supabase.from('products').select('*').eq('id', productId).single();
 
     if (error) {
       toast({
@@ -114,138 +110,152 @@ export default function ProductForm() {
 
     setFormData({
       ...data,
-      price: data.price / 100, // Convert from cents
+      price: data.price / 100, // convert cents -> MUR for the form
       uses: data.uses || [],
       gallery: data.gallery || [],
       label: data.label || '',
     });
+
     setUsesInput((data.uses || []).join(', '));
     setGalleryInput((data.gallery || []).join(', '));
+
     const parsedVariations = parseProductVariations(data.variations);
     setVariationForms(
-      (parsedVariations || []).map(variation => ({
-        id: variation.sku || Math.random().toString(36).slice(2),
-        label: variation.label,
-        sku: variation.sku,
-        quantity: variation.quantity != null ? String(variation.quantity) : '',
-        price: String(variation.price / 100),
-      }))
+      (parsedVariations || []).map(v => ({
+        id: v.sku || Math.random().toString(36).slice(2),
+        label: v.label,
+        sku: v.sku,
+        quantity: v.quantity != null ? String(v.quantity) : '',
+        price: String(v.price / 100), // cents -> MUR
+      })),
     );
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-  // Build a validated, normalized variations array
-  const normalizedVariations: Array<{
-    label: string;
-    sku: string;
-    price: number;      // cents
-    quantity?: number;  // optional, positive integer
-  }> = [];
+    // Build a validated, normalized variations array
+    const normalizedVariations: Array<{
+      label: string;
+      sku: string;
+      price: number;      // cents
+      quantity?: number;  // optional, positive integer
+    }> = [];
 
-  for (const variation of variationForms) {
-    const label = variation.label.trim();
-    const sku = variation.sku.trim();
-    const priceInput = variation.price.trim();
-    const quantityInput = variation.quantity.trim();
+    for (const v of variationForms) {
+      const label = v.label.trim();
+      const sku = v.sku.trim();
+      const priceInput = v.price.trim();
+      const quantityInput = v.quantity.trim();
 
-    // Skip empty rows
-    const rowEmpty = !label && !sku && !priceInput && !quantityInput;
-    if (rowEmpty) continue;
+      // Skip completely empty row
+      if (!label && !sku && !priceInput && !quantityInput) continue;
 
-    // Basic required fields
-    if (!label || !sku) {
-      setLoading(false);
-      toast({
-        title: 'Invalid variation',
-        description: 'Each variation must include a label and SKU.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // Price -> cents
-    const priceFloat = Number.parseFloat(priceInput.replace(/,/g, ''));
-    if (!Number.isFinite(priceFloat)) {
-      setLoading(false);
-      toast({
-        title: 'Invalid variation price',
-        description: 'Please provide a valid numeric price for each variation.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    const normalized: { label: string; sku: string; price: number; quantity?: number } = {
-      label,
-      sku,
-      price: Math.round(priceFloat * 100),
-    };
-
-    // Optional quantity (positive integer)
-    if (quantityInput) {
-      const q = Number.parseInt(quantityInput, 10);
-      if (!Number.isFinite(q) || Number.isNaN(q) || q <= 0) {
+      // Required fields
+      if (!label || !sku) {
         setLoading(false);
         toast({
-          title: 'Invalid variation quantity',
-          description: 'Variation quantities must be positive whole numbers.',
+          title: 'Invalid variation',
+          description: 'Each variation must include a label and SKU.',
           variant: 'destructive',
         });
         return;
       }
-      normalized.quantity = q;
+
+      // Price to cents
+      const priceFloat = Number.parseFloat(priceInput.replace(/,/g, ''));
+      if (!Number.isFinite(priceFloat) || priceFloat <= 0) {
+        setLoading(false);
+        toast({
+          title: 'Invalid variation price',
+          description: 'Please provide a valid numeric price greater than 0.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const norm: { label: string; sku: string; price: number; quantity?: number } = {
+        label,
+        sku,
+        price: Math.round(priceFloat * 100),
+      };
+
+      if (quantityInput) {
+        const q = Number.parseInt(quantityInput, 10);
+        if (!Number.isFinite(q) || Number.isNaN(q) || q <= 0) {
+          setLoading(false);
+          toast({
+            title: 'Invalid variation quantity',
+            description: 'Variation quantities must be positive whole numbers.',
+            variant: 'destructive',
+          });
+          return;
+        }
+        norm.quantity = q;
+      }
+
+      normalizedVariations.push(norm);
     }
 
-    normalizedVariations.push(normalized);
-  }
+    // Duplicate SKU check
+    const seen = new Set<string>();
+    for (const v of normalizedVariations) {
+      if (seen.has(v.sku)) {
+        setLoading(false);
+        toast({
+          title: 'Duplicate variation SKU',
+          description: 'Each variation must have a unique SKU.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      seen.add(v.sku);
+    }
 
-  // Validate base product price (to cents)
-  const parsedPrice = Number.parseFloat(String(formData.price));
-  if (!Number.isFinite(parsedPrice) || Number.isNaN(parsedPrice)) {
-    setLoading(false);
-    toast({
-      title: 'Invalid product price',
-      description: 'Please provide a valid base price for the product.',
-      variant: 'destructive',
-    });
-    return;
-  }
+    // Validate product base price (MUR -> cents)
+    const parsedPrice = Number.parseFloat(String(formData.price));
+    if (!Number.isFinite(parsedPrice)) {
+      setLoading(false);
+      toast({
+        title: 'Invalid product price',
+        description: 'Please provide a valid base price for the product.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
-  const productData = {
-    ...formData,
-    price: Math.round(parsedPrice * 100), // to cents
-    uses: usesInput.split(',').map(u => u.trim()).filter(Boolean),
-    gallery: galleryInput.split(',').map(u => u.trim()).filter(Boolean),
-    // Per PR intent: default to empty array when no valid options
-    variations: normalizedVariations.length > 0 ? normalizedVariations : [],
+    const productData = {
+      ...formData,
+      price: Math.round(parsedPrice * 100), // to cents
+      uses: usesInput.split(',').map(s => s.trim()).filter(Boolean),
+      gallery: galleryInput.split(',').map(s => s.trim()).filter(Boolean),
+      // Default to empty array when no valid variations
+      variations: normalizedVariations.length > 0 ? normalizedVariations : [],
+    };
+
+    try {
+      if (isEditing) {
+        const { error } = await supabase.from('products').update(productData).eq('id', id);
+        if (error) throw error;
+        toast({ title: 'Success', description: 'Product updated successfully' });
+      } else {
+        const { error } = await supabase.from('products').insert([productData]);
+        if (error) throw error;
+        toast({ title: 'Success', description: 'Product created successfully' });
+      }
+      navigate('/admin/products');
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to save product',
+        variant: 'destructive',
+      });
+      console.error('Product save error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  try {
-    if (isEditing) {
-      const { error } = await supabase.from('products').update(productData).eq('id', id);
-      if (error) throw error;
-      toast({ title: 'Success', description: 'Product updated successfully' });
-    } else {
-      const { error } = await supabase.from('products').insert([productData]);
-      if (error) throw error;
-      toast({ title: 'Success', description: 'Product created successfully' });
-    }
-    navigate('/admin/products');
-  } catch (error) {
-    toast({
-      title: 'Error',
-      description: error instanceof Error ? error.message : 'Failed to save product',
-      variant: 'destructive',
-    });
-    console.error('Product save error:', error);
-  } finally {
-    setLoading(false);
-  }
-};
-
 
   return (
     <AdminGuard>
@@ -289,7 +299,9 @@ const handleSubmit = async (e: React.FormEvent) => {
                       step="0.01"
                       min="0"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })
+                      }
                       required
                     />
                   </div>
