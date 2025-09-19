@@ -62,7 +62,7 @@ function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => {
-                const unitPrice = item.product.price;
+                const unitPrice = item.variation_price ?? item.product.price;
 
                 return (
                   <Card key={item.id} className="border-vanilla-beige/30 bg-vanilla-cream">
@@ -82,6 +82,14 @@ function CartPage() {
                           <p className="text-vanilla-brown/60 text-xs md:text-sm mb-1 md:mb-2">
                             {item.product.category}
                           </p>
+                          {item.variation_label && (
+                            <p className="text-vanilla-brown/70 text-xs md:text-sm mb-1 md:mb-2">
+                              {item.variation_label}
+                              {item.variation_sku && (
+                                <span className="ml-1 text-vanilla-brown/50">• SKU: {item.variation_sku}</span>
+                              )}
+                            </p>
+                          )}
                           <p className="text-vanilla-brown font-semibold text-sm md:text-base">
                             {formatPrice(unitPrice)}
                           </p>
