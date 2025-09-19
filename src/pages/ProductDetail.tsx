@@ -58,7 +58,7 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     console.log('Add to cart clicked', { product: product?.id, quantity, user: user?.id });
-    
+
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -71,11 +71,26 @@ const ProductDetail = () => {
     if (!product) return;
 
     console.log('About to call addToCart with:', { productId: product.id, quantity });
-    
-    // Simply add the product without variation requirement
+
+    if (variations && variations.length > 0 && !selectedVariation) {
+      toast({
+        title: "Select an Option",
+        description: "Please choose a variation before adding to cart.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     addToCart({
       productId: product.id,
       quantity,
+      variation: selectedVariation
+        ? {
+            sku: selectedVariation.sku,
+            label: selectedVariation.label,
+            price: selectedVariation.price,
+          }
+        : null,
     });
   };
 
