@@ -22,6 +22,9 @@ export type Database = {
           quantity: number
           updated_at: string | null
           user_id: string
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
         }
         Insert: {
           created_at?: string | null
@@ -30,6 +33,9 @@ export type Database = {
           quantity: number
           updated_at?: string | null
           user_id: string
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Update: {
           created_at?: string | null
@@ -38,10 +44,20 @@ export type Database = {
           quantity?: number
           updated_at?: string | null
           user_id?: string
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cart_items_product_id"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
@@ -57,6 +73,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label: string | null
+          variation_price: number | null
+          variation_sku: string | null
         }
         Insert: {
           created_at?: string | null
@@ -65,6 +84,9 @@ export type Database = {
           price_per_item: number
           product_id: string
           quantity: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Update: {
           created_at?: string | null
@@ -73,8 +95,25 @@ export type Database = {
           price_per_item?: number
           product_id?: string
           quantity?: number
+          variation_label?: string | null
+          variation_price?: number | null
+          variation_sku?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_order_items_order_id"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_order_items_product_id"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "order_items_order_id_fkey"
             columns: ["order_id"]
