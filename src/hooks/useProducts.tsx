@@ -12,7 +12,7 @@ type ProductQueryRow = ProductRow & {
   product_variations?: ProductVariationRow[] | null;
 };
 
-type Product = ProductRow & { variations: ProductVariation[] | null };
+type Product = Omit<ProductRow, 'variations'> & { variations: ProductVariation[] | null };
 export type ProductWithVariations = Product;
 
 const mapProduct = (product: ProductQueryRow): Product => {

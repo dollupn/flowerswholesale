@@ -9,6 +9,7 @@ export interface ProductVariation {
   sku: string;
   price: number;          // in cents
   quantity?: number | null;
+  [key: string]: any;     // Make it compatible with Json type
 }
 
 /** Accept either embedded JSON, related rows, or nothing */
