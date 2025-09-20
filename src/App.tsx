@@ -27,6 +27,7 @@ import Orders from "./pages/Orders";
 import VanillaBeanCremeBrulee from "./pages/recipes/VanillaBeanCremeBrulee";
 import MauritianVanillaGateau from "./pages/recipes/MauritianVanillaGateau";
 import VanillaSpiceIcedLatte from "./pages/recipes/VanillaSpiceIcedLatte";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
