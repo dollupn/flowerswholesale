@@ -25,7 +25,6 @@ export function useProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('in_stock', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -57,7 +56,6 @@ export function useFeaturedProducts() {
         .from('products')
         .select('*')
         .eq('featured', true)
-        .eq('in_stock', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -89,8 +87,7 @@ export function useProductsByCategory(category?: string) {
     queryFn: async () => {
       let query = supabase
         .from('products')
-        .select('*')
-        .eq('in_stock', true);
+        .select('*');
 
       if (category) {
         query = query.eq('category', category);

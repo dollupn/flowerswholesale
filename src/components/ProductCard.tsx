@@ -46,21 +46,40 @@ const ProductCard = ({ product }: ProductCardProps) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
-          {product.featured && (
-            <div className="absolute top-2 right-2">
-              <Badge variant="secondary" className="bg-vanilla-yellow text-vanilla-brown">
-                Featured
-              </Badge>
-            </div>
-          )}
+           {product.featured && !product.in_stock && (
+             <div className="absolute top-2 right-2 flex flex-col gap-1">
+               <Badge variant="secondary" className="bg-vanilla-yellow text-vanilla-brown">
+                 Featured
+               </Badge>
+               <Badge variant="destructive" className="bg-red-100 text-red-800">
+                 Sold Out
+               </Badge>
+             </div>
+           )}
 
-          {product.label && (
-            <div className="absolute top-2 left-2">
-              <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
-                {product.label}
-              </Badge>
-            </div>
-          )}
+           {product.featured && product.in_stock && (
+             <div className="absolute top-2 right-2">
+               <Badge variant="secondary" className="bg-vanilla-yellow text-vanilla-brown">
+                 Featured
+               </Badge>
+             </div>
+           )}
+
+           {!product.featured && !product.in_stock && (
+             <div className="absolute top-2 right-2">
+               <Badge variant="destructive" className="bg-red-100 text-red-800">
+                 Sold Out
+               </Badge>
+             </div>
+           )}
+
+           {product.label && (
+             <div className="absolute top-2 left-2">
+               <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+                 {product.label}
+               </Badge>
+             </div>
+           )}
         </div>
 
         <CardContent className="p-4">
@@ -86,11 +105,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               onClick={handleAddToCart}
               size="sm"
-              disabled={!hasVariations && (!user || isAddingToCart)}
+              disabled={!product.in_stock || (!hasVariations && (!user || isAddingToCart))}
               className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream disabled:opacity-50"
             >
               <ShoppingCart className="w-4 h-4 mr-1" />
-              {hasVariations ? "View Options" : isAddingToCart ? "Adding..." : "Add to Cart"}
+              {!product.in_stock 
+                ? "Coming Soon" 
+                : hasVariations 
+                ? "View Options" 
+                : isAddingToCart 
+                ? "Adding..." 
+                : "Add to Cart"}
             </Button>
           </div>
         </CardContent>

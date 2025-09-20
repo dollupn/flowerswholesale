@@ -324,10 +324,10 @@ const ProductDetail = () => {
                     onClick={handleAddToCart}
                     className="flex-1 bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream"
                     size="lg"
-                    disabled={isAddingToCart}
+                    disabled={!product.in_stock || isAddingToCart}
                   >
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+                    {!product.in_stock ? 'Coming Soon' : isAddingToCart ? 'Adding...' : 'Add to Cart'}
                   </Button>
                   <Button
                     onClick={handleWhatsAppInquiry}
