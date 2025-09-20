@@ -16,6 +16,8 @@ import { parseProductVariations, ProductVariation } from "@/lib/product";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
+const BASE_BEAN_PRICE_CENTS = 70 * 100;
+
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: product, isLoading } = useProduct(id || '');
@@ -33,6 +35,25 @@ const ProductDetail = () => {
   );
   const selectedVariation = variations?.find(variation => variation.sku === selectedVariationSku) ?? null;
   const displayPrice = selectedVariation ? selectedVariation.price : product?.price ?? 0;
+
+  const calculateSavingsPercentage = (variation: ProductVariation): number | null => {
+    if (typeof variation.quantity !== 'number' || variation.quantity <= 0) {
+      return null;
+    }
+
+    const regularPrice = variation.quantity * BASE_BEAN_PRICE_CENTS;
+    if (regularPrice <= 0) {
+      return null;
+    }
+
+    const savings = regularPrice - variation.price;
+    if (savings <= 0) {
+      return null;
+    }
+
+    const savingsPercentage = Math.round((savings / regularPrice) * 100);
+    return savingsPercentage > 0 ? savingsPercentage : null;
+  };
 
   const relatedProducts = categoryProducts
     .filter(p => p.id !== product?.id)
@@ -264,32 +285,48 @@ const ProductDetail = () => {
                     onValueChange={value => setSelectedVariationSku(value)}
                     className="space-y-3"
                   >
-                    {variations.map((variation: ProductVariation) => (
-                      <div
-                        key={variation.sku}
-                        className="flex items-start gap-3 border border-vanilla-beige/60 rounded-lg p-3 hover:border-vanilla-brown transition-colors"
-                      >
-                        <RadioGroupItem
-                          value={variation.sku}
-                          id={`variation-${variation.sku}`}
-                          className="mt-1"
-                        />
-                        <Label htmlFor={`variation-${variation.sku}`} className="flex-1 cursor-pointer">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <div>
-                              <p className="font-medium text-vanilla-brown">{variation.label}</p>
-                              {typeof variation.quantity === 'number' && (
-                                <p className="text-sm text-vanilla-brown/70">{variation.quantity} beans</p>
-                              )}
-                              <p className="text-xs text-vanilla-brown/60">SKU: {variation.sku}</p>
+                    {variations.map((variation: ProductVariation) => {
+                      const savingsPercentage = calculateSavingsPercentage(variation);
+
+                      return (
+                        <div
+                          key={variation.sku}
+                          className="relative flex items-start gap-3 border border-vanilla-beige/60 rounded-lg p-3 hover:border-vanilla-brown transition-colors"
+                        >
+                          <RadioGroupItem
+                            value={variation.sku}
+                            id={`variation-${variation.sku}`}
+                            className="mt-1"
+                          />
+                          <Label
+                            htmlFor={`variation-${variation.sku}`}
+                            className="flex-1 cursor-pointer pr-10 sm:pr-16"
+                          >
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                              <div>
+                                <p className="font-medium text-vanilla-brown">{variation.label}</p>
+                                {typeof variation.quantity === 'number' && (
+                                  <p className="text-sm text-vanilla-brown/70">{variation.quantity} beans</p>
+                                )}
+                                <p className="text-xs text-vanilla-brown/60">SKU: {variation.sku}</p>
+                              </div>
+                              <div className="text-right font-semibold text-vanilla-brown">
+                                {formatPrice(variation.price)}
+                              </div>
                             </div>
-                            <div className="text-right font-semibold text-vanilla-brown">
-                              {formatPrice(variation.price)}
+                          </Label>
+
+                          {savingsPercentage !== null && savingsPercentage > 0 && (
+                            <div className="absolute right-3 top-3">
+                              <div className="flex h-12 w-12 flex-col items-center justify-center rounded-full bg-emerald-500 text-[0.65rem] font-semibold uppercase leading-tight text-white shadow-md">
+                                <span>Save</span>
+                                <span>{savingsPercentage}%</span>
+                              </div>
                             </div>
-                          </div>
-                        </Label>
-                      </div>
-                    ))}
+                          )}
+                        </div>
+                      );
+                    })}
                   </RadioGroup>
                 </div>
               )}
