@@ -25,6 +25,7 @@ export function useProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .order('in_stock', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -40,6 +41,7 @@ export function useAllProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .order('in_stock', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -56,6 +58,7 @@ export function useFeaturedProducts() {
         .from('products')
         .select('*')
         .eq('featured', true)
+        .order('in_stock', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -93,7 +96,9 @@ export function useProductsByCategory(category?: string) {
         query = query.eq('category', category);
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query
+        .order('in_stock', { ascending: false })
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return (data ?? []).map(mapProduct);
     },
