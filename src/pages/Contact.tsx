@@ -72,7 +72,7 @@ const Contact = () => {
   };
 
   const handleWhatsApp = () => {
-    window.open("https://wa.me/23052345678", "_blank");
+    window.open("https://wa.me/23055310121", "_blank");
   };
 
   const handleInstagram = () => {

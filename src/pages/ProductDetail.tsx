@@ -100,7 +100,7 @@ const ProductDetail = () => {
       ? ` (${selectedVariation.label} - SKU ${selectedVariation.sku})`
       : '';
     const message = `Hi! I'm interested in ${product.name}${variationMessage}. Can you tell me more about it?`;
-    window.open(`https://wa.me/23052345678?text=${encodeURIComponent(message)}`, "_blank");
+    window.open(`https://wa.me/23055310121?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   const formatPrice = (priceInCents: number) => {

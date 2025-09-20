@@ -203,7 +203,7 @@ const About = () => {
                 Shop Now
               </button>
               <button 
-                onClick={() => window.open("https://wa.me/23052345678", "_blank")}
+                onClick={() => window.open("https://wa.me/23055310121", "_blank")}
                 className="border border-vanilla-brown text-vanilla-brown px-8 py-3 rounded-lg hover:bg-vanilla-brown/5 transition-colors"
               >
                 Contact Us
