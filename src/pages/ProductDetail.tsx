@@ -322,7 +322,7 @@ const ProductDetail = () => {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button
                     onClick={handleAddToCart}
-                    className="flex-1 bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream"
+                    className="flex-1 bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream text-base h-14 sm:h-12"
                     size="lg"
                     disabled={!product.in_stock || isAddingToCart}
                   >
@@ -332,7 +332,7 @@ const ProductDetail = () => {
                   <Button
                     onClick={handleWhatsAppInquiry}
                     variant="outline"
-                    className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
+                    className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5 text-base h-14 sm:h-12"
                     size="lg"
                   >
                     WhatsApp Inquiry
