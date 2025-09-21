@@ -202,24 +202,32 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Sending order confirmation email for order:', orderData.id);
 
+    const smtpUsername = Deno.env.get('ZOHO_SMTP_USER') ?? 'info@vanilluxe.store';
+    const smtpPassword = Deno.env.get('ZOHO_SMTP_PASSWORD') ?? 'gTeUN6GxgRT8';
+    const fromAddress = Deno.env.get('ZOHO_FROM_EMAIL') ?? 'info@vanilluxe.store';
+
+    if (!smtpUsername || !smtpPassword) {
+      throw new Error('Zoho SMTP credentials are not configured');
+    }
+
     const emailHtml = generateEmailHTML(orderData);
-    
+
     // Configure SMTP client for Zoho
     const client = new SMTPClient({
       connection: {
         hostname: "smtp.zoho.com",
-        port: 587,
+        port: 465,
         tls: true,
         auth: {
-          username: Deno.env.get('ZOHO_SMTP_USER')!,
-          password: Deno.env.get('ZOHO_SMTP_PASSWORD')!,
+          username: smtpUsername,
+          password: smtpPassword,
         },
       },
     });
 
     // Send email using Zoho SMTP
     await client.send({
-      from: "info@vanilluxe.store",
+      from: `Vanilluxe <${fromAddress}>`,
       to: orderData.customer.email,
       subject: `Order Confirmation - Vanilluxe #${orderData.id.slice(-8)}`,
       content: "auto",

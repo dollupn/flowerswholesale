@@ -181,6 +181,9 @@ function CheckoutPage() {
     setIsProcessing(true);
 
     try {
+      const shippingFeeCents = getShippingFee();
+      const grandTotalCents = totalPrice + shippingFeeCents;
+
       const orderPayload = {
         customer: {
           firstName: formData.firstName,
@@ -197,7 +200,7 @@ function CheckoutPage() {
         },
         shipping: {
           method: formData.shippingMethod,
-          fee: getShippingFee()
+          fee: shippingFeeCents
         },
         payment: {
           method: formData.paymentMethod
@@ -214,8 +217,8 @@ function CheckoutPage() {
         }),
         totals: {
           subtotal: totalPrice / 100,
-          shipping: getShippingFee() / 100,
-          grandTotal: (totalPrice + getShippingFee()) / 100
+          shipping: shippingFeeCents / 100,
+          grandTotal: grandTotalCents / 100
         },
         currency: 'MUR'
       };
@@ -225,7 +228,7 @@ function CheckoutPage() {
         .from('orders')
         .insert({
           user_id: user.id,
-          total_amount: totalPrice + getShippingFee(),
+          total_amount: grandTotalCents,
           shipping_address: {
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -261,6 +264,61 @@ function CheckoutPage() {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      if (user.email) {
+        const emailPayload = {
+          orderData: {
+            id: order.id,
+            customer: {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: user.email,
+              phone: formData.phone,
+            },
+            items: cartItems.map(item => {
+              const unitPrice = item.variation_price ?? item.product.price;
+              return {
+                name: item.product?.name ?? 'Product',
+                quantity: item.quantity,
+                price: (unitPrice * item.quantity) / 100,
+                variation: item.variation_label ?? undefined,
+              };
+            }),
+            shipping: {
+              method: formData.shippingMethod,
+              fee: shippingFeeCents / 100,
+              address: {
+                line1: formData.address,
+                city: formData.city,
+                postalCode: formData.postalCode || undefined,
+                country: formData.country,
+              },
+            },
+            payment: {
+              method: formData.paymentMethod,
+            },
+            totals: {
+              subtotal: totalPrice / 100,
+              shipping: shippingFeeCents / 100,
+              grandTotal: grandTotalCents / 100,
+            },
+          },
+        };
+
+        try {
+          const { error: emailError } = await supabase.functions.invoke('send-order-confirmation', {
+            body: emailPayload,
+          });
+
+          if (emailError) {
+            console.error('Failed to send order confirmation email:', emailError);
+          }
+        } catch (emailException) {
+          console.error('Unexpected error sending order confirmation email:', emailException);
+        }
+      } else {
+        console.warn('User email not available; skipping order confirmation email.');
+      }
 
       // Clear cart and form data
       await clearCart();
