@@ -14,6 +14,7 @@ import { AuthGuard } from '@/components/AuthGuard';
 import Header from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { InternationalPhoneInput } from '@/components/ui/phone-input';
 
 interface FormData {
   firstName: string;
@@ -83,22 +84,12 @@ function CheckoutPage() {
   };
 
   const validatePhone = (phone: string): boolean => {
-    const mauritiusPhoneRegex = /^(\+230\s?)?[5-9]\d{7}$/;
-    return mauritiusPhoneRegex.test(phone.replace(/\s/g, ''));
+    // Accept any non-empty phone number since we now support international numbers
+    return phone && phone.trim().length > 0;
   };
 
   const formatPhoneNumber = (phone: string): string => {
-    // Remove all non-digits
-    const cleaned = phone.replace(/\D/g, '');
-    
-    // If starts with 230, remove it for processing
-    const withoutCountryCode = cleaned.startsWith('230') ? cleaned.substring(3) : cleaned;
-    
-    // If it's 8 digits and starts with 5-9, format it
-    if (withoutCountryCode.length === 8 && /^[5-9]/.test(withoutCountryCode)) {
-      return `+230 ${withoutCountryCode}`;
-    }
-    
+    // No auto-formatting needed since the international input handles this
     return phone;
   };
 
@@ -110,7 +101,7 @@ function CheckoutPage() {
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
     } else if (!validatePhone(formData.phone)) {
-      newErrors.phone = 'Enter a valid Mauritius mobile number';
+      newErrors.phone = 'Enter a valid phone number';
     }
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (!formData.city.trim()) newErrors.city = 'City is required';
@@ -136,15 +127,7 @@ function CheckoutPage() {
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
-
-    // Auto-format phone number on blur
-    if (field === 'phone' && value !== formData.phone) {
-      const formatted = formatPhoneNumber(value);
-      if (formatted !== value) {
-        setFormData(prev => ({ ...prev, phone: formatted }));
-      }
-    }
-  }, [errors, formData.phone]);
+  }, [errors]);
 
   const handleShippingChange = (value: FormData['shippingMethod']) => {
     let newPaymentMethod = formData.paymentMethod;
@@ -354,12 +337,11 @@ function CheckoutPage() {
                   
                   <div>
                     <Label htmlFor="phone">Phone Number *</Label>
-                    <Input
-                      id="phone"
+                    <InternationalPhoneInput
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      onBlur={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="+230 5xxxxxxx"
+                      onChange={(value) => handleInputChange('phone', value || '')}
+                      placeholder="Enter phone number"
+                      defaultCountry="MU"
                       className={errors.phone ? 'border-red-500' : ''}
                     />
                     {errors.phone && (

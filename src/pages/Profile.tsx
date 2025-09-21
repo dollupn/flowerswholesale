@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { InternationalPhoneInput } from '@/components/ui/phone-input';
 
 function ProfilePage() {
   const { user } = useAuth();
@@ -187,11 +188,12 @@ function ProfilePage() {
               
               <div>
                 <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
+                <InternationalPhoneInput
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, phone: value || '' })}
                   disabled={!isEditing}
+                  defaultCountry="MU"
+                  placeholder="Enter phone number"
                 />
               </div>
               

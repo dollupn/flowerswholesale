@@ -1,0 +1,33 @@
+.phone-input-container {
+  display: flex !important;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.PhoneInputCountrySelect {
+  margin-right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+}
+
+.PhoneInputCountrySelectArrow {
+  color: hsl(var(--muted-foreground));
+}
+
+.PhoneInputInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: hsl(var(--foreground));
+}
+
+.PhoneInputInput::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.PhoneInputCountryIcon {
+  margin-right: 4px;
+}

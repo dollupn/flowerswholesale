@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { InternationalPhoneInput } from '@/components/ui/phone-input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
@@ -24,6 +25,7 @@ export default function Auth() {
     confirmPassword: '',
     firstName: '',
     lastName: '',
+    phone: '',
   });
 
   // Redirect if already authenticated
@@ -181,6 +183,15 @@ export default function Auth() {
                         onChange={(e) => setSignUpData({ ...signUpData, lastName: e.target.value })}
                       />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone">Phone Number</Label>
+                    <InternationalPhoneInput
+                      value={signUpData.phone}
+                      onChange={(value) => setSignUpData({ ...signUpData, phone: value || '' })}
+                      placeholder="Enter phone number"
+                      defaultCountry="MU"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
