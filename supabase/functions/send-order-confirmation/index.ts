@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -204,22 +204,35 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailHtml = generateEmailHTML(orderData);
     
-    const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+    // Configure SMTP client for Zoho
+    const client = new SMTPClient({
+      connection: {
+        hostname: "smtp.zoho.com",
+        port: 587,
+        tls: true,
+        auth: {
+          username: Deno.env.get('ZOHO_SMTP_USER')!,
+          password: Deno.env.get('ZOHO_SMTP_PASSWORD')!,
+        },
+      },
+    });
 
-    // Send email using Resend
-    const emailResponse = await resend.emails.send({
-      from: "Vanilluxe <info@vanilluxe.store>",
-      to: [orderData.customer.email],
+    // Send email using Zoho SMTP
+    await client.send({
+      from: "info@vanilluxe.store",
+      to: orderData.customer.email,
       subject: `Order Confirmation - Vanilluxe #${orderData.id.slice(-8)}`,
+      content: "auto",
       html: emailHtml,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    await client.close();
+
+    console.log("Email sent successfully via Zoho SMTP");
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: "Order confirmation email sent successfully",
-      emailId: emailResponse.data?.id
+      message: "Order confirmation email sent successfully"
     }), {
       status: 200,
       headers: {
