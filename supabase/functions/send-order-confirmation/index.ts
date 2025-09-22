@@ -1,271 +1,302 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+// index.ts — Deno deploy function (SMTP via denomailer)
+// - HTML email with correct headers (no quoted-printable artifacts)
+// - Trailing-space cleanup to avoid `=20`
+// - Plain-text fallback
+// - Updated "Payment Instructions" text
+
+// deno-lint-ignore-file no-explicit-any
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+// ---------- ENV with fallback (TEMP) ----------
+const SMTP_HOST = Deno.env.get("ZOHO_SMTP_HOST") ?? "smtp.zoho.com";
+const SMTP_PORT = Number(Deno.env.get("ZOHO_SMTP_PORT") ?? "465");
+const SMTP_SECURE = (Deno.env.get("ZOHO_SMTP_SECURE") ?? "true") === "true";
 
-interface OrderConfirmationRequest {
-  orderData: {
-    id: string;
-    customer: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-    };
-    items: Array<{
-      name: string;
-      quantity: number;
-      price: number;
-      variation?: string;
-    }>;
-    shipping: {
-      method: string;
-      fee: number;
-      address: {
-        line1: string;
-        city: string;
-        postalCode?: string;
-        country: string;
-      };
-    };
-    payment: {
-      method: string;
-    };
-    totals: {
-      subtotal: number;
-      shipping: number;
-      grandTotal: number;
-    };
-  };
+// keep these fallbacks for now (remove later for security!)
+const SMTP_USER = Deno.env.get("ZOHO_SMTP_USER") ?? "info@vanilluxe.store";
+const SMTP_PASS = Deno.env.get("ZOHO_SMTP_PASSWORD") ?? "gTeUN6GxgRT8";
+const FROM_EMAIL = Deno.env.get("ZOHO_FROM_EMAIL") ?? "info@vanilluxe.store";
+
+if (!SMTP_USER || !SMTP_PASS || !FROM_EMAIL) {
+  throw new Error("SMTP credentials missing: ZOHO_SMTP_USER / ZOHO_SMTP_PASSWORD / ZOHO_FROM_EMAIL");
 }
 
-const getShippingMethodName = (method: string) => {
-  switch (method) {
-    case 'postage':
-      return 'Postage';
-    case 'home_delivery':
-      return 'Home Delivery';
-    case 'pickup_pereybere':
-      return 'Pickup at Pereybere';
-    default:
-      return method;
-  }
+// ---------- TYPES (lightweight) ----------
+type OrderItem = {
+  name: string;
+  qty: number;
+  price: number; // per unit
+  subtitle?: string;
 };
 
-const getPaymentMethodName = (method: string) => {
-  switch (method) {
-    case 'juice':
-      return 'Juice (Bank Transfer/QR)';
-    case 'cod':
-      return 'Cash on Delivery';
-    default:
-      return method;
-  }
+type Address = {
+  line1?: string;
+  line2?: string;
+  city?: string;
+  region?: string;
+  postalCode?: string;
+  country?: string;
 };
 
-const generateEmailHTML = (orderData: OrderConfirmationRequest['orderData']) => {
-  const itemsHtml = orderData.items.map(item => `
-    <tr>
-      <td style="padding: 8px; border-bottom: 1px solid #eee;">
-        <strong>${item.name}</strong>
-        ${item.variation ? `<br><small style="color: #666;">${item.variation}</small>` : ''}
-      </td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">Rs ${item.price.toFixed(2)}</td>
-    </tr>
-  `).join('');
+type OrderData = {
+  id: string;
+  customer: { name: string; email: string; phone?: string };
+  items: OrderItem[];
+  shippingMethod: string; // e.g., "Postage", "Delivery", "Pickup"
+  paymentMethod: string;  // e.g., "Juice", "Cash on Delivery"
+  address?: Address;
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+  createdAt?: string | Date;
+};
+
+// ---------- UTILS ----------
+const mur = (n: number) => `Rs ${n.toFixed(2)}`;
+const esc = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); // for text fallback
+
+// ---------- EMAIL HTML ----------
+function generateEmailHTML(order: OrderData): string {
+  const last8 = order.id.slice(-8);
+  const addr = order.address ?? {};
+  const addressHtml = `
+    ${addr.line1 ?? ""}${addr.line1 && addr.line2 ? "<br/>" : ""}${addr.line2 ?? ""}
+    ${addr.city ? `<br/>${addr.city}` : ""}
+    ${addr.region ? `<br/>${addr.region}` : ""}
+    ${addr.postalCode ? `<br/>${addr.postalCode}` : ""}
+    ${addr.country ? `<br/>${addr.country}` : ""}
+  `.trim();
+
+  const itemsRows = order.items
+    .map(
+      (it) => `
+      <tr>
+        <td style="padding:10px 0;">
+          <div style="font-weight:600;color:#2b2b2b;">${esc(it.name)}</div>
+          ${it.subtitle ? `<div style="font-size:12px;color:#7a7a7a;">${esc(it.subtitle)}</div>` : ""}
+        </td>
+        <td style="padding:10px 0;text-align:center;">${it.qty}</td>
+        <td style="padding:10px 0;text-align:right;">${mur(it.price * it.qty)}</td>
+      </tr>
+    `,
+    )
+    .join("");
+
+  const created = order.createdAt ? new Date(order.createdAt) : new Date();
 
   return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Order Confirmation - Vanilluxe</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f7f4;">
-      <div style="max-width: 600px; margin: 0 auto; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-        
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #8B4513, #A0522D); color: white; padding: 30px; text-align: center;">
-          <h1 style="margin: 0; font-size: 28px; font-weight: bold;">Vanilluxe</h1>
-          <p style="margin: 5px 0 0 0; font-size: 16px; opacity: 0.9;">Premium Vanilla Products</p>
-        </div>
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Order Confirmation</title>
+</head>
+<body style="margin:0;background:#f6f6f6;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f6f6;padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:600px;max-width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="background:#8a4b20;color:#fff;padding:24px 24px;">
+              <div style="font-size:24px;font-weight:700;">Vanilluxe</div>
+              <div style="opacity:.9;">Premium Vanilla Products</div>
+            </td>
+          </tr>
 
-        <!-- Content -->
-        <div style="padding: 30px;">
-          <h2 style="color: #8B4513; margin-top: 0;">Order Confirmation</h2>
-          
-          <p>Dear ${orderData.customer.firstName} ${orderData.customer.lastName},</p>
-          
-          <p>Thank you for your order! We're excited to prepare your premium vanilla products for you.</p>
-          
-          <div style="background-color: #f9f7f4; padding: 20px; margin: 20px 0; border-radius: 8px;">
-            <h3 style="margin-top: 0; color: #8B4513;">Order Details</h3>
-            <p style="margin: 5px 0;"><strong>Order ID:</strong> #${orderData.id.slice(-8)}</p>
-            <p style="margin: 5px 0;"><strong>Customer:</strong> ${orderData.customer.firstName} ${orderData.customer.lastName}</p>
-            <p style="margin: 5px 0;"><strong>Email:</strong> ${orderData.customer.email}</p>
-            <p style="margin: 5px 0;"><strong>Phone:</strong> ${orderData.customer.phone}</p>
-          </div>
+          <tr>
+            <td style="padding:24px;">
+              <h1 style="margin:0 0 12px;font-size:20px;">Order Confirmation</h1>
+              <p style="margin:0 0 16px;">Dear ${esc(order.customer.name)},</p>
+              <p style="margin:0 0 16px;">Thank you for your order! We’re excited to prepare your premium vanilla products for you.</p>
 
-          <!-- Order Items -->
-          <h3 style="color: #8B4513;">Items Ordered</h3>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="background-color: #f5f5f5;">
-                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #ddd;">Product</th>
-                <th style="padding: 12px 8px; text-align: center; border-bottom: 2px solid #ddd;">Qty</th>
-                <th style="padding: 12px 8px; text-align: right; border-bottom: 2px solid #ddd;">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;background:#fafafa;border:1px solid #eee;border-radius:8px;">
+                <tr>
+                  <td style="padding:16px 16px 8px;font-weight:600;color:#444;">Order Details</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 16px 16px;">
+                    <div style="line-height:1.6;">
+                      <div>Order ID: <strong>#${last8}</strong></div>
+                      <div>Date: ${created.toLocaleString()}</div>
+                      <div>Customer: ${esc(order.customer.name)}</div>
+                      <div>Email: <a href="mailto:${order.customer.email}">${order.customer.email}</a></div>
+                      ${order.customer.phone ? `<div>Phone: ${esc(order.customer.phone)}</div>` : ""}
+                    </div>
+                  </td>
+                </tr>
+              </table>
 
-          <!-- Shipping & Payment Info -->
-          <div style="background-color: #f9f7f4; padding: 20px; margin: 20px 0; border-radius: 8px;">
-            <h3 style="margin-top: 0; color: #8B4513;">Shipping & Payment</h3>
-            <p style="margin: 5px 0;"><strong>Shipping Method:</strong> ${getShippingMethodName(orderData.shipping.method)}</p>
-            <p style="margin: 5px 0;"><strong>Payment Method:</strong> ${getPaymentMethodName(orderData.payment.method)}</p>
-            <p style="margin: 5px 0;"><strong>Delivery Address:</strong></p>
-            <p style="margin: 5px 0 5px 20px;">
-              ${orderData.shipping.address.line1}<br>
-              ${orderData.shipping.address.city}${orderData.shipping.address.postalCode ? ', ' + orderData.shipping.address.postalCode : ''}<br>
-              ${orderData.shipping.address.country}
-            </p>
-          </div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;border-top:1px solid #eee;">
+                <thead>
+                  <tr>
+                    <th align="left" style="padding:12px 0;color:#666;font-weight:600;">Product</th>
+                    <th align="center" style="padding:12px 0;color:#666;font-weight:600;">Qty</th>
+                    <th align="right" style="padding:12px 0;color:#666;font-weight:600;">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsRows}
+                </tbody>
+              </table>
 
-          <!-- Order Total -->
-          <div style="background-color: #8B4513; color: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <span>Subtotal:</span>
-              <span>Rs ${orderData.totals.subtotal.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-              <span>Shipping:</span>
-              <span>Rs ${orderData.totals.shipping.toFixed(2)}</span>
-            </div>
-            <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.3); margin: 15px 0;">
-            <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold;">
-              <span>Total:</span>
-              <span>Rs ${orderData.totals.grandTotal.toFixed(2)}</span>
-            </div>
-          </div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;background:#fafafa;border:1px solid #eee;border-radius:8px;">
+                <tr>
+                  <td style="padding:16px;">
+                    <div style="font-weight:600;margin-bottom:8px;">Shipping & Payment</div>
+                    <div>Shipping Method: ${esc(order.shippingMethod)}</div>
+                    <div>Payment Method: ${esc(order.paymentMethod)}</div>
+                    ${
+                      addressHtml
+                        ? `<div style="margin-top:8px;"><div style="font-weight:600;">Delivery Address:</div><div>${addressHtml}</div></div>`
+                        : ""
+                    }
+                  </td>
+                </tr>
+              </table>
 
-          <!-- Payment Instructions -->
-          ${orderData.payment.method === 'juice' ? `
-          <div style="background-color: #e8f5e8; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #4caf50;">
-            <h3 style="margin-top: 0; color: #2e7d32;">Payment Instructions</h3>
-            <p>Please complete your payment via Juice using bank transfer or QR code. You will receive payment instructions separately.</p>
-          </div>
-          ` : ''}
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 16px;">
+                <tr>
+                  <td style="padding:8px 0;color:#555;">Subtotal:</td>
+                  <td align="right" style="padding:8px 0;color:#555;">${mur(order.subtotal)}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:#555;">Shipping:</td>
+                  <td align="right" style="padding:8px 0;color:#555;">${mur(order.shippingCost)}</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding:8px 0 0;">
+                    <hr style="border:none;border-top:1px solid #eee;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:12px 0;font-weight:700;color:#2b2b2b;">Total:</td>
+                  <td align="right" style="padding:12px 0;font-weight:700;color:#2b2b2b;">${mur(order.total)}</td>
+                </tr>
+              </table>
 
-          <p>We will process your order and keep you updated on the delivery status.</p>
-          
-          <p>If you have any questions about your order, please don't hesitate to contact us.</p>
-          
-          <p style="margin-top: 30px;">Best regards,<br>
-          <strong>The Vanilluxe Team</strong></p>
-        </div>
+              <!-- Payment Instructions (UPDATED) -->
+              <div style="margin:16px 0;padding:16px;border:1px solid #e5f2e9;background:#f3fbf6;border-radius:8px;">
+                <div style="font-weight:700;margin-bottom:6px;">Payment Instructions</div>
+                <div>Please complete your payment via <strong>Juice</strong> to <strong>58196634</strong> and include your <strong>order number</strong> as remarks.</div>
+              </div>
 
-        <!-- Footer -->
-        <div style="background-color: #f5f5f5; padding: 20px; text-align: center; border-top: 1px solid #ddd;">
-          <p style="margin: 0; color: #666; font-size: 14px;">
-            This is an automated message. Please do not reply to this email.
-          </p>
-          <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">
-            © 2024 Vanilluxe - Premium Vanilla Products
-          </p>
-        </div>
-      </div>
-    </body>
-    </html>
+              <p style="margin:16px 0;">We will process your order and keep you updated on the delivery status.</p>
+              <p style="margin:16px 0;">If you have any questions about your order, please don’t hesitate to contact us.</p>
+
+              <p style="margin:16px 0 0;">Best regards,<br/>The Vanilluxe Team</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:16px 24px;color:#8b8b8b;font-size:12px;text-align:center;border-top:1px solid #eee;">
+              This is an automated message. Please do not reply to this email.<br/>
+              © ${new Date().getFullYear()} Vanilluxe — Premium Vanilla Products
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
   `;
-};
+}
 
-const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: { ...corsHeaders } });
+// ---------- TEXT FALLBACK ----------
+function generateEmailText(order: OrderData): string {
+  const lines: string[] = [];
+  lines.push("Vanilluxe — Premium Vanilla Products");
+  lines.push("");
+  lines.push("Order Confirmation");
+  lines.push(`Order ID: #${order.id.slice(-8)}`);
+  lines.push(`Customer: ${order.customer.name}`);
+  lines.push(`Email: ${order.customer.email}`);
+  if (order.customer.phone) lines.push(`Phone: ${order.customer.phone}`);
+  lines.push("");
+  lines.push("Items:");
+  for (const it of order.items) {
+    lines.push(` - ${it.name} x${it.qty} — ${mur(it.price * it.qty)}`);
   }
-
-  try {
-    const { orderData }: OrderConfirmationRequest = await req.json();
-
-    if (!orderData) {
-      throw new Error('Order data is required');
-    }
-
-    console.log('Sending order confirmation email for order:', orderData.id);
-
-    const smtpUsername = Deno.env.get('ZOHO_SMTP_USER') ?? 'info@vanilluxe.store';
-    const smtpPassword = Deno.env.get('ZOHO_SMTP_PASSWORD') ?? 'gTeUN6GxgRT8';
-    const fromAddress = Deno.env.get('ZOHO_FROM_EMAIL') ?? 'info@vanilluxe.store';
-
-    if (!smtpUsername || !smtpPassword) {
-      throw new Error('Zoho SMTP credentials are not configured');
-    }
-
-    const emailHtml = generateEmailHTML(orderData);
-
-    // Configure SMTP client for Zoho
-    const client = new SMTPClient({
-      connection: {
-        hostname: "smtp.zoho.com",
-        port: 465,
-        tls: true,
-        auth: {
-          username: smtpUsername,
-          password: smtpPassword,
-        },
-      },
-    });
-
-    // Send email using Zoho SMTP
-    await client.send({
-      from: `Vanilluxe <${fromAddress}>`,
-      to: orderData.customer.email,
-      subject: `Order Confirmation - Vanilluxe #${orderData.id.slice(-8)}`,
-      content: "auto",
-      html: emailHtml,
-    });
-
-    await client.close();
-
-    console.log("Email sent successfully via Zoho SMTP");
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: "Order confirmation email sent successfully"
-    }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
-    });
-
-  } catch (error: any) {
-    console.error("Error in send-order-confirmation function:", error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        success: false 
-      }),
-      {
-        status: 500,
-        headers: { 
-          "Content-Type": "application/json", 
-          ...corsHeaders 
-        },
-      }
-    );
+  lines.push("");
+  lines.push(`Shipping Method: ${order.shippingMethod}`);
+  lines.push(`Payment Method: ${order.paymentMethod}`);
+  if (order.address) {
+    const a = order.address;
+    lines.push("Delivery Address:");
+    if (a.line1) lines.push(` ${a.line1}`);
+    if (a.line2) lines.push(` ${a.line2}`);
+    const cityLine = [a.city, a.region, a.postalCode].filter(Boolean).join(", ");
+    if (cityLine) lines.push(` ${cityLine}`);
+    if (a.country) lines.push(` ${a.country}`);
   }
-};
+  lines.push("");
+  lines.push(`Subtotal: ${mur(order.subtotal)}`);
+  lines.push(`Shipping: ${mur(order.shippingCost)}`);
+  lines.push(`Total: ${mur(order.total)}`);
+  lines.push("");
+  lines.push("Payment Instructions:");
+  lines.push("Please complete your payment via Juice to 58196634 and include your order number as remarks.");
+  lines.push("");
+  lines.push("We will process your order and keep you updated on the delivery status.");
+  lines.push("If you have any questions about your order, please contact us.");
+  lines.push("");
+  lines.push("Best regards,");
+  lines.push("The Vanilluxe Team");
+  return lines.join("\n");
+}
 
-serve(handler);
+// ---------- MAIN SEND ----------
+export async function sendOrderConfirmation(orderData: OrderData) {
+  const client = new SMTPClient({
+    connection: {
+      hostname: SMTP_HOST,
+      port: SMTP_PORT,
+      tls: SMTP_SECURE, // true for 465 SSL
+      auth: {
+        username: SMTP_USER,
+        password: SMTP_PASS,
+      },
+    },
+  });
+
+  const htmlRaw = generateEmailHTML(orderData);
+  // remove trailing spaces/tabs (prevents =20 in quoted-printable)
+  const htmlClean = htmlRaw.replace(/[ \t]+$/gm, "").replace(/\r?\n/g, "\n");
+  const textAlt = generateEmailText(orderData);
+
+  const subject = `Order Confirmation - Vanilluxe #${orderData.id.slice(-8)}`;
+
+  await client.send({
+    from: `Vanilluxe <${FROM_EMAIL}>`,
+    to: orderData.customer.email,
+    subject,
+    // Explicit HTML content; denomailer will set MIME, but we reinforce it:
+    content: "text/html; charset=UTF-8",
+    html: htmlClean,
+    // provide a text fallback part for clients that prefer it
+    text: textAlt,
+    headers: {
+      "MIME-Version": "1.0",
+      "Content-Type": "text/html; charset=UTF-8",
+      "Content-Transfer-Encoding": "8bit",
+    },
+  });
+
+  await client.close();
+}
+
+// Example usage (remove in production)
+// const example: OrderData = {
+//   id: "V000000000123",
+//   customer: { name: "Testing Bhoe", email: "info@dollupboutique.com", phone: "+230580608359" },
+//   items: [{ name: "Premium Madagascar Vanilla Beans", qty: 1, price: 325, subtitle: "5 Vanilla Beans" }],
+//   shippingMethod: "Postage",
+//   paymentMethod: "Juice (Bank Transfer/QR)",
+//   address: { line1: "Les flamants", city: "Pereybere", country: "Mauritius" },
+//   subtotal: 325,
+//   shippingCost: 60,
+//   total: 385,
+// };
+// await sendOrderConfirmation(example);
