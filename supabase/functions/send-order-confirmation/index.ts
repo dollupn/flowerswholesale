@@ -1,31 +1,43 @@
-// index.ts — Deno deploy function (SMTP via denomailer)
-// - HTML email with correct headers (no quoted-printable artifacts)
-// - Trailing-space cleanup to avoid `=20`
-// - Plain-text fallback
-// - Updated "Payment Instructions" text
+// supabase/functions/send-order-confirmation/index.ts
+// Deno Edge Function: sends order confirmation email via Zoho (SMTP, denomailer)
 
-// deno-lint-ignore-file no-explicit-any
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
-// ---------- ENV with fallback (TEMP) ----------
-const SMTP_HOST = Deno.env.get("ZOHO_SMTP_HOST") ?? "smtp.zoho.com";
-const SMTP_PORT = Number(Deno.env.get("ZOHO_SMTP_PORT") ?? "465");
-const SMTP_SECURE = (Deno.env.get("ZOHO_SMTP_SECURE") ?? "true") === "true";
+/* ------------------------- C O R S   S E T U P ------------------------- */
 
-// keep these fallbacks for now (remove later for security!)
+const ALLOWED_ORIGINS = [
+  "https://vanilluxe.store",
+  "http://localhost:5173", // dev
+];
+
+const corsHeaders = (origin: string | null) => ({
+  "Access-Control-Allow-Origin": ALLOWED_ORIGINS.includes(origin ?? "")
+    ? (origin as string)
+    : "https://vanilluxe.store",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Vary": "Origin",
+});
+
+/* ---------------------------- E N V   (tmp) ---------------------------- */
+/*  You asked to keep fallbacks for now to ensure it works even if env vars
+    are not present. Remove the fallbacks later for security.              */
+
+const SMTP_HOST = Deno.env.get("ZOHO_SMTP_HOST") ?? "smtp.zoho.com";
+const SMTP_PORT = Number(Deno.env.get("ZOHO_SMTP_PORT") ?? "587"); // 587 STARTTLS (often faster than 465)
+const SMTP_SECURE = (Deno.env.get("ZOHO_SMTP_SECURE") ?? "false") === "true"; // false for 587, true for 465
+
 const SMTP_USER = Deno.env.get("ZOHO_SMTP_USER") ?? "info@vanilluxe.store";
 const SMTP_PASS = Deno.env.get("ZOHO_SMTP_PASSWORD") ?? "gTeUN6GxgRT8";
 const FROM_EMAIL = Deno.env.get("ZOHO_FROM_EMAIL") ?? "info@vanilluxe.store";
 
-if (!SMTP_USER || !SMTP_PASS || !FROM_EMAIL) {
-  throw new Error("SMTP credentials missing: ZOHO_SMTP_USER / ZOHO_SMTP_PASSWORD / ZOHO_FROM_EMAIL");
-}
+/* ------------------------------ T Y P E S ------------------------------ */
 
-// ---------- TYPES (lightweight) ----------
 type OrderItem = {
   name: string;
   qty: number;
-  price: number; // per unit
+  price: number;          // per unit
   subtitle?: string;
 };
 
@@ -42,8 +54,8 @@ type OrderData = {
   id: string;
   customer: { name: string; email: string; phone?: string };
   items: OrderItem[];
-  shippingMethod: string; // e.g., "Postage", "Delivery", "Pickup"
-  paymentMethod: string;  // e.g., "Juice", "Cash on Delivery"
+  shippingMethod: string;  // "Postage" | "Delivery" | "Pickup"
+  paymentMethod: string;   // "Juice" | "COD" | etc.
   address?: Address;
   subtotal: number;
   shippingCost: number;
@@ -51,12 +63,14 @@ type OrderData = {
   createdAt?: string | Date;
 };
 
-// ---------- UTILS ----------
+/* ------------------------------ U T I L S ------------------------------ */
+
 const mur = (n: number) => `Rs ${n.toFixed(2)}`;
 const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); // for text fallback
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// ---------- EMAIL HTML ----------
+/* --------------------------- E M A I L   H T M L --------------------------- */
+
 function generateEmailHTML(order: OrderData): string {
   const last8 = order.id.slice(-8);
   const addr = order.address ?? {};
@@ -68,25 +82,20 @@ function generateEmailHTML(order: OrderData): string {
     ${addr.country ? `<br/>${addr.country}` : ""}
   `.trim();
 
-  const itemsRows = order.items
-    .map(
-      (it) => `
-      <tr>
-        <td style="padding:10px 0;">
-          <div style="font-weight:600;color:#2b2b2b;">${esc(it.name)}</div>
-          ${it.subtitle ? `<div style="font-size:12px;color:#7a7a7a;">${esc(it.subtitle)}</div>` : ""}
-        </td>
-        <td style="padding:10px 0;text-align:center;">${it.qty}</td>
-        <td style="padding:10px 0;text-align:right;">${mur(it.price * it.qty)}</td>
-      </tr>
-    `,
-    )
-    .join("");
+  const itemsRows = order.items.map(it => `
+    <tr>
+      <td style="padding:10px 0;">
+        <div style="font-weight:600;color:#2b2b2b;">${esc(it.name)}</div>
+        ${it.subtitle ? `<div style="font-size:12px;color:#7a7a7a;">${esc(it.subtitle)}</div>` : ""}
+      </td>
+      <td style="padding:10px 0;text-align:center;">${it.qty}</td>
+      <td style="padding:10px 0;text-align:right;">${mur(it.price * it.qty)}</td>
+    </tr>
+  `).join("");
 
   const created = order.createdAt ? new Date(order.createdAt) : new Date();
 
-  return `
-<!doctype html>
+  return `<!doctype html>
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -112,9 +121,7 @@ function generateEmailHTML(order: OrderData): string {
               <p style="margin:0 0 16px;">Thank you for your order! We’re excited to prepare your premium vanilla products for you.</p>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;background:#fafafa;border:1px solid #eee;border-radius:8px;">
-                <tr>
-                  <td style="padding:16px 16px 8px;font-weight:600;color:#444;">Order Details</td>
-                </tr>
+                <tr><td style="padding:16px 16px 8px;font-weight:600;color:#444;">Order Details</td></tr>
                 <tr>
                   <td style="padding:0 16px 16px;">
                     <div style="line-height:1.6;">
@@ -136,9 +143,7 @@ function generateEmailHTML(order: OrderData): string {
                     <th align="right" style="padding:12px 0;color:#666;font-weight:600;">Price</th>
                   </tr>
                 </thead>
-                <tbody>
-                  ${itemsRows}
-                </tbody>
+                <tbody>${itemsRows}</tbody>
               </table>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;background:#fafafa;border:1px solid #eee;border-radius:8px;">
@@ -157,23 +162,10 @@ function generateEmailHTML(order: OrderData): string {
               </table>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 16px;">
-                <tr>
-                  <td style="padding:8px 0;color:#555;">Subtotal:</td>
-                  <td align="right" style="padding:8px 0;color:#555;">${mur(order.subtotal)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:8px 0;color:#555;">Shipping:</td>
-                  <td align="right" style="padding:8px 0;color:#555;">${mur(order.shippingCost)}</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="padding:8px 0 0;">
-                    <hr style="border:none;border-top:1px solid #eee;" />
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:12px 0;font-weight:700;color:#2b2b2b;">Total:</td>
-                  <td align="right" style="padding:12px 0;font-weight:700;color:#2b2b2b;">${mur(order.total)}</td>
-                </tr>
+                <tr><td style="padding:8px 0;color:#555;">Subtotal:</td><td align="right" style="padding:8px 0;color:#555;">${mur(order.subtotal)}</td></tr>
+                <tr><td style="padding:8px 0;color:#555;">Shipping:</td><td align="right" style="padding:8px 0;color:#555;">${mur(order.shippingCost)}</td></tr>
+                <tr><td colspan="2" style="padding:8px 0 0;"><hr style="border:none;border-top:1px solid #eee;" /></td></tr>
+                <tr><td style="padding:12px 0;font-weight:700;color:#2b2b2b;">Total:</td><td align="right" style="padding:12px 0;font-weight:700;color:#2b2b2b;">${mur(order.total)}</td></tr>
               </table>
 
               <!-- Payment Instructions (UPDATED) -->
@@ -200,11 +192,9 @@ function generateEmailHTML(order: OrderData): string {
     </tr>
   </table>
 </body>
-</html>
-  `;
+</html>`;
 }
 
-// ---------- TEXT FALLBACK ----------
 function generateEmailText(order: OrderData): string {
   const lines: string[] = [];
   lines.push("Vanilluxe — Premium Vanilla Products");
@@ -247,35 +237,32 @@ function generateEmailText(order: OrderData): string {
   return lines.join("\n");
 }
 
-// ---------- MAIN SEND ----------
-export async function sendOrderConfirmation(orderData: OrderData) {
+/* --------------------------- S M T P   S E N D --------------------------- */
+
+async function sendOrderEmail(order: OrderData) {
   const client = new SMTPClient({
     connection: {
       hostname: SMTP_HOST,
       port: SMTP_PORT,
-      tls: SMTP_SECURE, // true for 465 SSL
-      auth: {
-        username: SMTP_USER,
-        password: SMTP_PASS,
-      },
+      // For Zoho: 587 + STARTTLS (tls: true triggers STARTTLS for denomailer)
+      tls: SMTP_PORT === 587 ? true : SMTP_SECURE,
+      auth: { username: SMTP_USER, password: SMTP_PASS },
     },
   });
 
-  const htmlRaw = generateEmailHTML(orderData);
-  // remove trailing spaces/tabs (prevents =20 in quoted-printable)
+  const htmlRaw = generateEmailHTML(order);
+  // remove trailing spaces/tabs (prevents =20) and normalize newlines
   const htmlClean = htmlRaw.replace(/[ \t]+$/gm, "").replace(/\r?\n/g, "\n");
-  const textAlt = generateEmailText(orderData);
+  const textAlt = generateEmailText(order);
 
-  const subject = `Order Confirmation - Vanilluxe #${orderData.id.slice(-8)}`;
+  const subject = `Order Confirmation - Vanilluxe #${order.id.slice(-8)}`;
 
   await client.send({
     from: `Vanilluxe <${FROM_EMAIL}>`,
-    to: orderData.customer.email,
+    to: order.customer.email,
     subject,
-    // Explicit HTML content; denomailer will set MIME, but we reinforce it:
     content: "text/html; charset=UTF-8",
     html: htmlClean,
-    // provide a text fallback part for clients that prefer it
     text: textAlt,
     headers: {
       "MIME-Version": "1.0",
@@ -287,16 +274,52 @@ export async function sendOrderConfirmation(orderData: OrderData) {
   await client.close();
 }
 
-// Example usage (remove in production)
-// const example: OrderData = {
-//   id: "V000000000123",
-//   customer: { name: "Testing Bhoe", email: "info@dollupboutique.com", phone: "+230580608359" },
-//   items: [{ name: "Premium Madagascar Vanilla Beans", qty: 1, price: 325, subtitle: "5 Vanilla Beans" }],
-//   shippingMethod: "Postage",
-//   paymentMethod: "Juice (Bank Transfer/QR)",
-//   address: { line1: "Les flamants", city: "Pereybere", country: "Mauritius" },
-//   subtotal: 325,
-//   shippingCost: 60,
-//   total: 385,
-// };
-// await sendOrderConfirmation(example);
+/* --------------------------- H A N D L E R --------------------------- */
+/*  Call this function from your frontend with:
+    supabase.functions.invoke("send-order-confirmation", { body: orderData })
+*/
+
+Deno.serve(async (req: Request) => {
+  const origin = req.headers.get("origin");
+
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders(origin) });
+  }
+
+  if (req.method !== "POST") {
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: corsHeaders(origin),
+    });
+  }
+
+  try {
+    const order = (await req.json()) as OrderData;
+
+    // Basic validation
+    if (!order?.customer?.email || !order?.id) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Missing order.id or customer.email" }),
+        { status: 400, headers: { ...corsHeaders(origin), "Content-Type": "application/json" } },
+      );
+    }
+
+    // Option A (fast UX): fire-and-forget email so the client doesn't wait
+    // const _p = sendOrderEmail(order).catch((e) => console.error("Email error:", e));
+
+    // Option B (strict): wait for email to be sent, fail request if it fails
+    await sendOrderEmail(order);
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(JSON.stringify({ ok: false, error: String(err) }), {
+      status: 500,
+      headers: { ...corsHeaders(origin), "Content-Type": "application/json" },
+    });
+  }
+});
