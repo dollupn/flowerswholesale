@@ -27,6 +27,12 @@ const client = new SMTPClient({
   },
 });
 
+// top of file, near other envs
+const orderCopyEmails = (Deno.env.get("ORDER_COPY_EMAILS") ?? "nushag81@gmail.com")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+
 /* ---------- Types ---------- */
 type OrderItem = { sku: string; name: string; quantity: number; price: number; variant?: string };
 type OrderData = {
@@ -145,6 +151,7 @@ serve(async (req: Request) => {
       to: (orderData as OrderData).customer.email,
       subject: `Order Confirmation - Vanilluxe #${(orderData as OrderData).id.slice(-8)}`,
       html: emailHtml,
+      bcc: orderCopyEmails,
     });
 
     // Optional: copy to store inbox
