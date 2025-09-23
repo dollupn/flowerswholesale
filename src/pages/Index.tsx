@@ -15,11 +15,13 @@ import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useFeaturedProducts } from "@/hooks/useProducts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentRecipe, setCurrentRecipe] = useState(0);
   const { data: featuredProducts = [], isLoading } = useFeaturedProducts();
+  const { t } = useLanguage();
 
   const testimonials = [
     {
@@ -46,18 +48,18 @@ const Index = () => {
   const features = [
     {
       icon: Award,
-      title: "Premium Source",
-      description: "Direct from Madagascar's finest vanilla farms"
+      title: t("whyChoose.premiumSource"),
+      description: t("whyChoose.premiumSourceDesc")
     },
     {
       icon: Shield,
-      title: "Authentic Flavor",
-      description: "100% pure, no artificial additives or preservatives"
+      title: t("whyChoose.authenticFlavor"),
+      description: t("whyChoose.authenticFlavorDesc")
     },
     {
       icon: Star,
-      title: "Handpicked Quality",
-      description: "Grade A beans selected by experienced farmers"
+      title: t("whyChoose.handpicked"),
+      description: t("whyChoose.handpickedDesc")
     }
   ];
 
@@ -129,12 +131,11 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
               <h1 className="text-4xl md:text-6xl font-serif font-bold text-vanilla-brown mb-6">
-                Pure Madagascar
-                <span className="block text-vanilla-brown/80">Vanilla</span>
+                {t("hero.title1")}
+                <span className="block text-vanilla-brown/80">{t("hero.title2")}</span>
               </h1>
               <p className="text-xl text-vanilla-brown/80 mb-8 leading-relaxed">
-                Delivered with Elegance to Mauritius. Experience the authentic taste of
-                premium vanilla beans, sourced directly from Madagascar&apos;s finest farms.
+                {t("hero.subtitle")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -144,7 +145,7 @@ const Index = () => {
                 >
                   <Link to="/shop">
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    Shop Now
+                    {t("hero.shopNow")}
                   </Link>
                 </Button>
                 <Button
@@ -153,14 +154,14 @@ const Index = () => {
                   size="lg"
                   className="border-vanilla-brown text-vanilla-brown hover:bg-vanilla-brown/5"
                 >
-                  <Link to="/about">Learn Our Story</Link>
+                  <Link to="/about">{t("hero.learnStory")}</Link>
                 </Button>
               </div>
             </div>
             <div className="hidden lg:block relative">
               <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
-                <p className="text-vanilla-brown font-semibold">Grade A Quality</p>
-                <p className="text-vanilla-brown/70 text-sm">Directly sourced</p>
+                <p className="text-vanilla-brown font-semibold">{t("hero.gradeA")}</p>
+                <p className="text-vanilla-brown/70 text-sm">{t("hero.directlySourced")}</p>
               </div>
             </div>
           </div>
@@ -172,11 +173,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
-              Featured Products
+              {t("featured.title")}
             </h2>
             <p className="text-vanilla-brown/70 max-w-2xl mx-auto">
-              Discover our premium selection of Madagascar vanilla products, 
-              perfect for gourmet cooking and baking.
+              {t("featured.description")}
             </p>
           </div>
 
@@ -201,7 +201,7 @@ const Index = () => {
 
           <div className="text-center">
             <Button asChild size="lg" variant="outline" className="border-vanilla-brown text-vanilla-brown">
-              <Link to="/shop">View All Products</Link>
+              <Link to="/shop">{t("featured.viewAll")}</Link>
             </Button>
           </div>
         </div>
@@ -212,10 +212,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
-              Why Choose Vanilluxe?
+              {t("whyChoose.title")}
             </h2>
             <p className="text-vanilla-brown/70 max-w-2xl mx-auto">
-              We're committed to bringing you the finest vanilla experience in Mauritius.
+              {t("whyChoose.description")}
             </p>
           </div>
 
@@ -244,10 +244,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
-              Vanilla Recipes
+              {t("recipes.title")}
             </h2>
             <p className="text-vanilla-brown/70 max-w-2xl mx-auto">
-              Explore decadent ways to savour our Madagascar vanilla with easy-to-follow recipes.
+              {t("recipes.description")}
             </p>
           </div>
 
@@ -286,7 +286,7 @@ const Index = () => {
                   <div className="space-y-5">
                     <div>
                       <span className="inline-block uppercase tracking-widest text-xs text-vanilla-brown/60 mb-2">
-                        Featured Recipe
+                        {t("recipes.featuredRecipe")}
                       </span>
                       <h3 className="text-2xl md:text-3xl font-serif font-semibold text-vanilla-brown mb-3">
                         {recipes[currentRecipe].title}
@@ -304,7 +304,7 @@ const Index = () => {
                         {recipes[currentRecipe].serves}
                       </span>
                       <span className="bg-vanilla-yellow/30 px-3 py-1 rounded-full">
-                        Madagascar Vanilla
+                        {t("recipes.madagascarVanilla")}
                       </span>
                     </div>
 
@@ -314,15 +314,14 @@ const Index = () => {
                         size="lg"
                         className="bg-vanilla-brown text-vanilla-cream hover:bg-vanilla-brown/90"
                       >
-                        <Link to={recipes[currentRecipe].path}>View full recipe</Link>
+                        <Link to={recipes[currentRecipe].path}>{t("recipes.viewFullRecipe")}</Link>
                       </Button>
                     )}
 
                     <div className="text-sm text-vanilla-brown/60">
-                      <p className="font-semibold text-vanilla-brown">Chef's Tip</p>
+                      <p className="font-semibold text-vanilla-brown">{t("recipes.chefTip")}</p>
                       <p>
-                        Split the vanilla bean lengthwise and scrape out the seeds to infuse the richest flavour
-                        into your dessert.
+                        {t("recipes.chefTipDesc")}
                       </p>
                     </div>
                   </div>
@@ -352,7 +351,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-vanilla-brown mb-4">
-              What Our Customers Say
+              {t("testimonials.title")}
             </h2>
           </div>
 
@@ -399,12 +398,12 @@ const Index = () => {
           <div className="flex items-center justify-center space-x-8">
             <div className="flex items-center space-x-3">
               <Truck className="w-6 h-6" />
-              <span className="font-medium">Island-wide Delivery</span>
+              <span className="font-medium">{t("delivery.islandWide")}</span>
             </div>
             <div className="hidden md:block w-px h-8 bg-vanilla-cream/30"></div>
             <div className="flex items-center space-x-3">
               <Shield className="w-6 h-6" />
-              <span className="font-medium">Quality Guaranteed</span>
+              <span className="font-medium">{t("delivery.qualityGuaranteed")}</span>
             </div>
           </div>
         </div>

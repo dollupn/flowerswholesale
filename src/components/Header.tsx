@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useRole";
 import { useCart } from "@/hooks/useCart";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,13 +22,14 @@ const Header = () => {
   const { user, signOut, loading } = useAuth();
   const { isAdmin } = useIsAdmin();
   const { totalItems } = useCart();
+  const { t } = useLanguage();
 
   const navItems = [
-    { name: "Home", path: "/" },
-    { name: "Shop", path: "/shop" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
-    { name: "FAQ", path: "/faq" },
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.shop"), path: "/shop" },
+    { name: t("nav.about"), path: "/about" },
+    { name: t("nav.contact"), path: "/contact" },
+    { name: t("nav.faq"), path: "/faq" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -68,6 +71,7 @@ const Header = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Search className="h-5 w-5" />
             </Button>
@@ -110,20 +114,20 @@ const Header = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/profile">
                       <User className="mr-2 h-4 w-4" />
-                      Profile
+                      {t("auth.profile")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/orders">
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      My Orders
+                      {t("auth.myOrders")}
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link to="/admin">
                         <Settings className="mr-2 h-4 w-4" />
-                        Admin Dashboard
+                        {t("auth.adminDashboard")}
                       </Link>
                     </DropdownMenuItem>
                   )}
@@ -134,13 +138,13 @@ const Header = () => {
                     className="text-red-600"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    {t("auth.signOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button asChild variant="default" className="hidden md:flex bg-vanilla-brown hover:bg-vanilla-brown/90">
-                <Link to="/auth">Sign In</Link>
+                <Link to="/auth">{t("auth.signIn")}</Link>
               </Button>
             )}
           </div>
@@ -175,23 +179,23 @@ const Header = () => {
                       className="block text-sm font-medium text-vanilla-brown/70"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Profile
+                      {t("auth.profile")}
                     </Link>
                     <Link
                       to="/orders"
                       className="block text-sm font-medium text-vanilla-brown/70"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      My Orders
+                      {t("auth.myOrders")}
                     </Link>
                     {isAdmin && (
-                      <Link
-                        to="/admin"
-                        className="block text-sm font-medium text-vanilla-brown/70"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Admin Dashboard
-                      </Link>
+                        <Link
+                          to="/admin"
+                          className="block text-sm font-medium text-vanilla-brown/70"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {t("auth.adminDashboard")}
+                        </Link>
                     )}
                     <Button
                       onClick={() => {
@@ -203,7 +207,7 @@ const Header = () => {
                       disabled={loading}
                       className="w-full border-vanilla-brown text-vanilla-brown"
                     >
-                      Sign Out
+                      {t("auth.signOut")}
                     </Button>
                   </div>
                 ) : (
@@ -212,7 +216,7 @@ const Header = () => {
                     className="w-full bg-vanilla-brown hover:bg-vanilla-brown/90"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Link to="/auth">Sign In</Link>
+                    <Link to="/auth">{t("auth.signIn")}</Link>
                   </Button>
                 )}
               </div>
