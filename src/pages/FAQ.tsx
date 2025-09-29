@@ -9,24 +9,24 @@ import { MessageCircle, Truck, Shield, Star } from "lucide-react";
 const FAQ = () => {
   const faqCategories = [
     {
-      title: "Product Quality & Authenticity",
+      title: "Product Quality & Freshness",
       icon: Star,
       faqs: [
         {
-          question: "How do I know if your vanilla is authentic Madagascar vanilla?",
-          answer: "All our vanilla beans come with certificates of origin from Madagascar. Each batch is traceable to specific farms in the Sambava and Antalaha regions. Authentic Madagascar vanilla has a rich, creamy flavor profile with floral notes that artificial vanilla cannot replicate."
+          question: "How fresh are your flowers?",
+          answer: "All our flowers are sourced fresh from trusted local and international suppliers. We receive daily and weekly shipments depending on the variety. Each stem is quality-checked before delivery to ensure peak freshness."
         },
         {
-          question: "What's the difference between Grade A and Grade B vanilla beans?",
-          answer: "Grade A beans (Gourmet) have higher moisture content (30-35%), are more pliable, and perfect for extracts and direct use. Grade B beans (Extract grade) have lower moisture (15-25%), are drier, and ideal for making extracts or cooking where the beans will be processed."
+          question: "What varieties do you offer?",
+          answer: "We offer a wide selection including premium roses (red, white, pink), orchids, lilies, sunflowers, tulips, and seasonal blooms. We also provide tropical foliage and greenery for arrangements."
         },
         {
-          question: "How long do vanilla beans stay fresh?",
-          answer: "Properly stored Grade A vanilla beans can maintain their quality for 2-4 years. Store them in airtight containers away from light and heat. They may develop a white crystalline coating (vanillin crystals) which is actually a sign of high quality."
+          question: "How long do wholesale flowers last?",
+          answer: "With proper care, our roses last 7-10 days, orchids 2-3 weeks, and most seasonal flowers 5-7 days. We provide care instructions with every order to ensure maximum longevity."
         },
         {
-          question: "Can I see the vanilla beans before purchasing?",
-          answer: "We offer detailed photos of each batch and can provide additional images upon request. For local customers in Mauritius, we also offer inspection before purchase through our WhatsApp contact."
+          question: "Can I request specific flower varieties?",
+          answer: "Yes! Contact us via WhatsApp with your requirements. We work with our suppliers to source specific varieties for large events and special requests."
         }
       ]
     },
@@ -36,11 +36,11 @@ const FAQ = () => {
       faqs: [
         {
           question: "Do you deliver across Mauritius?",
-          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 1000. Same-day delivery available in Grand Bay area, and next-day delivery for other regions."
+          answer: "Yes! We provide island-wide delivery across Mauritius. Free delivery for orders over Rs 1000. Same-day delivery available in the north, and scheduled delivery for other regions."
         },
         {
-          question: "How is vanilla packaged for shipping?",
-          answer: "All vanilla products are vacuum-sealed and packaged in food-grade containers to maintain freshness. Orders of 3, 5, or 10 vanilla beans are carefully placed in a premium glass tube, while extracts are securely packaged to prevent breakage during transit."
+          question: "How are flowers packaged for delivery?",
+          answer: "All flowers are carefully packed in protective sleeves with water tubes on stems. Bulk orders are transported in temperature-controlled vehicles to maintain freshness. We use sturdy boxes to prevent damage during transit."
         },
         {
           question: "What are your delivery charges?",
@@ -53,24 +53,24 @@ const FAQ = () => {
       ]
     },
     {
-      title: "Storage & Usage Tips",
+      title: "Care & Handling Tips",
       icon: Shield,
       faqs: [
         {
-          question: "How should I store vanilla beans?",
-          answer: "Store vanilla beans in airtight containers at room temperature, away from direct sunlight. Avoid refrigeration as it can cause moisture issues. Properly stored beans can last 2-4 years."
+          question: "How should I care for wholesale flowers?",
+          answer: "Cut stems at 45-degree angle, remove leaves below water line, use flower food, change water every 2 days, and keep in cool location away from direct sunlight and heat sources."
         },
         {
-          question: "How much vanilla extract should I use in recipes?",
-          answer: "Generally, use 1 teaspoon of pure vanilla extract per cup of flour in baking recipes. For custards and ice creams, start with 1/2 teaspoon per cup of liquid and adjust to taste."
+          question: "What's the best way to prepare flowers for events?",
+          answer: "Order 1-2 days before your event. Store in cool room (15-18°C), keep stems in water, and arrange the day before. Mist lightly with water and transport carefully in boxes."
         },
         {
-          question: "Can I reuse vanilla beans after scraping?",
-          answer: "Absolutely! Used vanilla bean pods can be placed in sugar to make vanilla sugar, added to milk for flavoring, or used to make vanilla extract. They retain flavor for several uses."
+          question: "Can flowers be stored in a refrigerator?",
+          answer: "Yes, but not with fruits or vegetables as they emit ethylene gas that ages flowers. Keep at 2-4°C in a dedicated floral cooler if possible. Remove before use and let reach room temperature slowly."
         },
         {
-          question: "What's the shelf life of vanilla extract?",
-          answer: "Pure vanilla extract has an indefinite shelf life when stored properly. The alcohol content preserves it, and it may actually improve with age. Store in a cool, dark place."
+          question: "How do I extend flower life?",
+          answer: "Use clean vases, flower food, cut stems regularly, change water frequently, and keep away from heat, direct sun, and ripening fruit. Remove wilted blooms promptly."
         }
       ]
     },
@@ -79,27 +79,27 @@ const FAQ = () => {
       icon: MessageCircle,
       faqs: [
         {
-          question: "What is your return policy?",
-          answer: "We offer a 30-day satisfaction guarantee. If you're not completely satisfied with your vanilla products, contact us within 30 days for a full refund or exchange. Products must be in original packaging."
+          question: "What is your freshness guarantee?",
+          answer: "We guarantee all flowers are fresh upon delivery. If you receive flowers that don't meet our quality standards, contact us immediately with photos for a replacement or full refund."
         },
         {
-          question: "Do you guarantee the quality of your vanilla?",
-          answer: "Yes! We guarantee that all our vanilla products are authentic Madagascar vanilla of the highest quality. If any product doesn't meet our quality standards, we'll replace it or provide a full refund."
+          question: "Do you offer refunds for wilted flowers?",
+          answer: "Yes! If flowers arrive wilted or damaged, contact us within 24 hours with photos. We'll arrange immediate replacement or full refund. Customer satisfaction is our priority."
         },
         {
-          question: "What if my vanilla beans arrive damaged?",
-          answer: "Contact us immediately with photos of the damaged product. We'll arrange a replacement or full refund within 24 hours. Customer satisfaction is our top priority."
+          question: "What if flowers wilt quickly after delivery?",
+          answer: "Contact us immediately with photos. Quick wilting usually indicates care issues, but we'll work with you to resolve the problem and provide guidance or replacement if needed."
         },
         {
-          question: "Can I return opened products?",
-          answer: "Yes, if you're not satisfied with the quality, you can return even opened products within 30 days. We stand behind our quality guarantee completely."
+          question: "Can I return unused flowers?",
+          answer: "Due to the perishable nature of flowers, we cannot accept returns of unused flowers. However, we stand behind our quality guarantee for any freshness or quality issues."
         }
       ]
     }
   ];
 
   const handleWhatsApp = () => {
-    window.open("https://wa.me/23055310121", "_blank");
+    window.open("https://wa.me/23059447719", "_blank");
   };
 
   return (
@@ -114,8 +114,8 @@ const FAQ = () => {
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-vanilla-brown/80 max-w-2xl mx-auto">
-              Everything you need to know about our premium Madagascar vanilla products, 
-              shipping, storage, and more.
+              Everything you need to know about our wholesale flowers, 
+              delivery, care instructions, and more.
             </p>
           </div>
         </section>
@@ -128,7 +128,7 @@ const FAQ = () => {
                 Can't Find Your Answer?
               </h2>
               <p className="mb-6 text-vanilla-cream/90">
-                Our vanilla experts are here to help! Get personalized advice and quick answers.
+                Our flower specialists are here to help! Get personalized advice for your events.
               </p>
               <Button
                 onClick={handleWhatsApp}
@@ -178,13 +178,13 @@ const FAQ = () => {
             <Card className="luxury-shadow border-vanilla-beige/30 bg-vanilla-cream">
               <CardHeader>
                 <CardTitle className="text-xl font-serif text-vanilla-brown">
-                  Vanilla Usage Guide
+                  Flower Care Guide
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <p className="text-vanilla-brown/80 mb-4">
-                  New to using premium vanilla? Download our comprehensive guide with 
-                  recipes, storage tips, and usage recommendations.
+                  New to wholesale flowers? Learn best practices for care, 
+                  storage, and creating stunning arrangements.
                 </p>
                 <Button 
                   variant="outline" 
@@ -204,7 +204,7 @@ const FAQ = () => {
               <CardContent className="p-6">
                 <p className="text-vanilla-brown/80 mb-4">
                   Our team is always ready to help with personalized advice 
-                  for your specific vanilla needs and applications.
+                  for your events, weddings, and flower needs.
                 </p>
                 <Button 
                   asChild

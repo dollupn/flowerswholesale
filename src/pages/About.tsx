@@ -9,12 +9,12 @@ const About = () => {
     {
       icon: Award,
       title: "Premium Quality",
-      description: "We source only the finest Grade A vanilla beans from trusted Madagascar farmers."
+      description: "We source only the freshest flowers from trusted local and international suppliers."
     },
     {
       icon: Users,
-      title: "Direct Trade",
-      description: "Building long-term relationships with vanilla farmers for fair and sustainable trade."
+      title: "Direct Sourcing",
+      description: "Building long-term relationships with growers for consistent quality and fair pricing."
     },
     {
       icon: Truck,
@@ -24,7 +24,7 @@ const About = () => {
     {
       icon: Heart,
       title: "Passion Driven",
-      description: "Our love for authentic vanilla drives everything we do at Vanilluxe."
+      description: "Our love for fresh flowers drives everything we do at Flowers Wholesale Mauritius."
     }
   ];
 
@@ -40,8 +40,8 @@ const About = () => {
               Our Story
             </h1>
             <p className="text-xl text-vanilla-brown/80 max-w-3xl mx-auto leading-relaxed">
-              Born from a passion for authentic flavors and a deep connection to Madagascar's 
-              vanilla heritage, Vanilluxe brings you the world's finest vanilla to Mauritius.
+              Born from a passion for fresh blooms and quality service, 
+              Flowers Wholesale Mauritius brings you premium wholesale flowers for every occasion.
             </p>
           </div>
         </section>
@@ -52,23 +52,23 @@ const About = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl font-serif font-bold text-vanilla-brown mb-6">
-                  From Madagascar Farms to Your Kitchen
+                  From Local & International Suppliers to Your Events
                 </h2>
                 <div className="space-y-4 text-vanilla-brown/80 leading-relaxed">
                   <p>
-                    Our journey began with a simple mission: to bring the authentic taste of 
-                    Madagascar vanilla to the beautiful island of Mauritius. We recognized that 
-                    despite Mauritius's rich culinary heritage, access to premium vanilla was limited.
+                    Our journey began with a simple mission: to provide fresh, high-quality wholesale flowers 
+                    to event planners, florists, and businesses across Mauritius. We recognized the need 
+                    for reliable wholesale flower services on the island.
                   </p>
                   <p>
-                    Working directly with vanilla farmers in the Sambava region of Madagascar, 
-                    we've established relationships built on trust, quality, and fair trade practices. 
-                    This connection ensures that every vanilla bean meets our exacting standards 
-                    while supporting the livelihoods of farming communities.
+                    Working with local growers and trusted international suppliers, 
+                    we've established relationships built on trust, quality, and consistency. 
+                    This network ensures that every stem meets our exacting standards 
+                    while supporting the local floral industry.
                   </p>
                   <p>
-                    Today, Vanilluxe proudly serves chefs, bakers, and food enthusiasts across 
-                    Mauritius with vanilla products that represent the pinnacle of quality and authenticity.
+                    Today, Flowers Wholesale Mauritius proudly serves event planners, wedding organizers, 
+                    hotels, and florists across Mauritius with fresh flowers that create unforgettable moments.
                   </p>
                 </div>
               </div>
@@ -93,8 +93,8 @@ const About = () => {
                     Our Vision
                   </h3>
                   <p className="text-vanilla-brown/80 leading-relaxed">
-                    To become the premier destination for authentic Madagascar vanilla in the 
-                    Indian Ocean region, known for uncompromising quality and exceptional service.
+                    To become the premier wholesale flower supplier in Mauritius, 
+                    known for freshness, variety, and exceptional service.
                   </p>
                 </CardContent>
               </Card>
@@ -105,8 +105,8 @@ const About = () => {
                     Our Mission
                   </h3>
                   <p className="text-vanilla-brown/80 leading-relaxed">
-                    To deliver pure, premium vanilla products that elevate culinary experiences 
-                    while supporting sustainable farming practices and building lasting relationships 
+                    To deliver fresh, premium flowers that elevate every occasion 
+                    while supporting sustainable practices and building lasting relationships 
                     with our customers and suppliers.
                   </p>
                 </CardContent>
@@ -160,23 +160,23 @@ const About = () => {
               </div>
               <div>
                 <h2 className="text-3xl font-serif font-bold mb-6">
-                  Sourcing Transparency
+                  Quality & Freshness
                 </h2>
                 <div className="space-y-4 leading-relaxed">
                   <p>
-                    We believe in complete transparency about our sourcing practices. 
-                    Every batch of vanilla beans can be traced back to specific farms 
-                    in the Sambava and Antalaha regions of Madagascar.
+                    We believe in complete transparency about our sourcing and quality standards. 
+                    Every flower delivery is carefully selected and inspected 
+                    to ensure peak freshness and quality.
                   </p>
                   <p>
-                    Our vanilla undergoes traditional curing processes that take 6-9 months, 
-                    ensuring the complex flavor profile that Madagascar vanilla is famous for. 
-                    We work only with farmers who maintain organic and sustainable practices.
+                    Our flowers are sourced from temperature-controlled environments and 
+                    delivered using proper cold-chain logistics. 
+                    We work only with suppliers who maintain the highest standards.
                   </p>
                   <p>
-                    Each shipment is carefully inspected for moisture content, appearance, 
-                    and aroma before being approved for sale. This rigorous quality control 
-                    ensures that every Vanilluxe product meets our high standards.
+                    Each shipment is carefully inspected for freshness, stem quality, 
+                    and bloom condition before being approved for delivery. This rigorous quality control 
+                    ensures that every Flowers Wholesale Mauritius order exceeds expectations.
                   </p>
                 </div>
               </div>
@@ -188,12 +188,12 @@ const About = () => {
         <section className="py-16 bg-vanilla-cream">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-serif font-bold text-vanilla-brown mb-6">
-              Ready to Experience Premium Vanilla?
+              Ready for Fresh Wholesale Flowers?
             </h2>
             <p className="text-vanilla-brown/80 mb-8 max-w-2xl mx-auto">
-              Join hundreds of satisfied customers across Mauritius who trust Vanilluxe 
-              for their vanilla needs. From professional chefs to home bakers, 
-              we're here to elevate your culinary creations.
+              Join event planners, florists, and businesses across Mauritius who trust 
+              Flowers Wholesale Mauritius for their flower needs. From weddings to corporate events, 
+              we're here to make your occasions bloom beautifully.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
@@ -203,7 +203,7 @@ const About = () => {
                 Shop Now
               </button>
               <button 
-                onClick={() => window.open("https://wa.me/23055310121", "_blank")}
+                onClick={() => window.open("https://wa.me/23059447719", "_blank")}
                 className="border border-vanilla-brown text-vanilla-brown px-8 py-3 rounded-lg hover:bg-vanilla-brown/5 transition-colors"
               >
                 Contact Us

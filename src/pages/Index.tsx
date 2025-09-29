@@ -25,21 +25,21 @@ const Index = () => {
 
   const testimonials = [
     {
-      name: "Neha",
-      role: "Home Baker",
-      text: "Vanilluxe vanilla beans are exceptional. The aroma and flavor are unmatched in Mauritius.",
+      name: "Priya",
+      role: "Wedding Planner",
+      text: "Flowers Wholesale Mauritius provides the freshest blooms for our events. Consistently reliable quality.",
       rating: 5
     },
     {
-      name: "Raj Patel",
-      role: "Chef",
-      text: "Finally found authentic Madagascar vanilla in Mauritius! My desserts have never tasted better.",
+      name: "Marc Laurent",
+      role: "Hotel Manager",
+      text: "We trust them for all our floral arrangements. Fresh deliveries and beautiful varieties every time.",
       rating: 5
     },
     {
-      name: "Lea",
-      role: "Restaurant Owner",
-      text: "The quality is consistent and the flavor is pure. Our customers love our vanilla desserts now.",
+      name: "Sophie",
+      role: "Event Coordinator",
+      text: "Their roses and orchids are stunning. Perfect for corporate events and special occasions.",
       rating: 5
     }
   ];
@@ -63,34 +63,34 @@ const Index = () => {
     }
   ];
 
-  // New recipes data with paths (for dedicated pages) and hi-res images
+  // Flower arrangement guides with paths
   const recipes = [
     {
-      title: "Vanilla Bean Crème Brûlée",
+      title: "Elegant Wedding Centerpiece",
       description:
-        "A silky custard infused with Madagascar vanilla, finished with a caramelised sugar crust.",
+        "Create stunning table arrangements with roses, baby's breath, and eucalyptus for the perfect wedding ambiance.",
       image: "/lovable-uploads/creme.webp",
-      prepTime: "45 mins",
-      serves: "Serves 4",
+      prepTime: "30 mins setup",
+      serves: "10 centerpieces",
       path: "/recipes/vanilla-bean-creme-brulee"
     },
     {
-      title: "Mauritian Vanilla Gateau",
+      title: "Corporate Event Arrangement",
       description:
-        "A moist butter cake layered with vanilla bean pastry cream and toasted coconut flakes.",
+        "Professional floral displays combining orchids and tropical foliage for sophisticated business events.",
       image: "/lovable-uploads/cake.webp",
-      prepTime: "1 hr 10 mins",
-      serves: "Serves 8",
+      prepTime: "1 hour setup",
+      serves: "Large venue",
       path: "/recipes/mauritian-vanilla-gateau"
     },
     {
-      title: "Vanilla & Spice Iced Latte",
+      title: "Seasonal Bouquet Guide",
       description:
-        "Cold-brew coffee sweetened with vanilla bean syrup and a touch of island spices for a refreshing treat.",
+        "Fresh seasonal blooms arranged with island flair - perfect for gifts and special occasions.",
       image:
         "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=1200&q=80",
-      prepTime: "15 mins",
-      serves: "Serves 2",
+      prepTime: "20 mins",
+      serves: "5 bouquets",
       path: "/recipes/vanilla-spice-iced-latte"
     }
   ];

@@ -25,7 +25,7 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/info@vanilluxe.store", {
+      const response = await fetch("https://formsubmit.co/ajax/info@flowerswholesalemauritius.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,11 +72,11 @@ const Contact = () => {
   };
 
   const handleWhatsApp = () => {
-    window.open("https://wa.me/23055310121", "_blank");
+    window.open("https://wa.me/23059447719", "_blank");
   };
 
   const handleInstagram = () => {
-    window.open("https://instagram.com/vanilluxe", "_blank");
+    window.open("https://instagram.com/flowerswholesalemauritius", "_blank");
   };
 
   return (
@@ -91,8 +91,8 @@ const Contact = () => {
               Get In Touch
             </h1>
             <p className="text-xl text-vanilla-brown/80 max-w-2xl mx-auto">
-              Have questions about our vanilla products? Need advice on usage? 
-              We're here to help you discover the perfect vanilla for your needs.
+              Have questions about our wholesale flowers? Need advice for events? 
+              We're here to help you find the perfect flowers for any occasion.
             </p>
           </div>
         </section>
@@ -182,7 +182,7 @@ const Contact = () => {
                         value={formData.message}
                         onChange={handleChange}
                         className="border-vanilla-beige/50 focus:border-vanilla-brown"
-                        placeholder="Tell us about your vanilla needs, questions, or how we can help you..."
+                        placeholder="Tell us about your flower needs, event requirements, or how we can help you..."
                       />
                     </div>
 

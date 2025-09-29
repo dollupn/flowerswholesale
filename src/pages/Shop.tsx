@@ -39,11 +39,11 @@ const Shop = () => {
         <section className="gradient-bg py-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-serif font-bold text-vanilla-brown mb-4">
-              Premium Vanilla Collection
+              Wholesale Flower Collection
             </h1>
             <p className="text-xl text-vanilla-brown/80 max-w-2xl mx-auto">
-              Discover our complete range of Madagascar vanilla products, 
-              from premium beans to artisanal extracts.
+              Discover our complete range of fresh wholesale flowers, 
+              from premium roses to exotic orchids.
             </p>
           </div>
         </section>

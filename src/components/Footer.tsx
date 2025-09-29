@@ -5,15 +5,15 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const handleWhatsApp = () => {
-    window.open("https://wa.me/23055310121", "_blank");
+    window.open("https://wa.me/23059447719", "_blank");
   };
 
   const handleInstagram = () => {
-    window.open("https://instagram.com/vanilluxemu", "_blank");
+    window.open("https://instagram.com/flowerswholesalemauritius", "_blank");
   };
 
   const handleFacebook = () => {
-    window.open("https://facebook.com/vanilluxemu", "_blank");
+    window.open("https://facebook.com/flowerswholesalemauritius", "_blank");
   };
 
   return (
@@ -25,17 +25,16 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-4">
               <img 
                 src="/lovable-uploads/fd43cf6a-6de6-42ab-8f98-3a49d52e16ec.png" 
-                alt="Vanilluxe Logo" 
+                alt="Flowers Wholesale Mauritius Logo" 
                 className="h-12 w-auto filter invert"
               />
               <div>
-                <h3 className="text-xl font-serif font-bold">Vanilluxe</h3>
-                <p className="text-sm text-vanilla-cream/80">Pure Madagascar Vanilla, Delivered with Elegance</p>
+                <h3 className="text-xl font-serif font-bold">Flowers Wholesale Mauritius</h3>
               </div>
             </div>
             <p className="text-vanilla-cream/80 mb-6 max-w-md">
-              Premium Madagascar vanilla products sourced directly from farmers.
-              Experience the authentic taste of pure vanilla in Mauritius.
+              Premium wholesale flowers sourced from local and international suppliers.
+              Fresh flowers delivered across Mauritius for all occasions.
             </p>
           </div>
 
@@ -83,7 +82,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-vanilla-cream/20 mt-8 pt-6 text-center text-sm text-vanilla-cream/60">
-          <p>&copy; 2025 Vanilluxe. All rights reserved. | Premium Madagascar Vanilla in Mauritius</p>
+          <p>&copy; 2025 Flowers Wholesale Mauritius. All rights reserved. | Fresh Wholesale Flowers in Mauritius</p>
         </div>
       </div>
     </footer>

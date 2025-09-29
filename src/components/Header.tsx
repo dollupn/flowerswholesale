@@ -42,15 +42,14 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3">
             <img
               src="/logo.png"
-              alt="Vanilluxe Logo"
+              alt="Flowers Wholesale Mauritius Logo"
               className="h-12 w-auto"
             />
             <span className="text-xl font-serif font-bold text-vanilla-brown sm:hidden">
-              Vanilluxe
+              FWM
             </span>
             <div className="hidden sm:block">
-              <h1 className="text-2xl font-serif font-bold text-vanilla-brown">Vanilluxe</h1>
-              <p className="text-xs text-vanilla-brown/70 -mt-1">Pure Madagascar Vanilla</p>
+              <h1 className="text-2xl font-serif font-bold text-vanilla-brown">Flowers Wholesale Mauritius</h1>
             </div>
           </Link>
 

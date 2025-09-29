@@ -26,7 +26,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [language, setLanguage] = useState<Language>('en');
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('vanilluxe-language') as Language;
+    const savedLanguage = localStorage.getItem('fwm-language') as Language;
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'fr')) {
       setLanguage(savedLanguage);
     }
@@ -34,7 +34,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
-    localStorage.setItem('vanilluxe-language', lang);
+    localStorage.setItem('fwm-language', lang);
   };
 
   // Translation function - will be enhanced with actual translations
@@ -70,37 +70,37 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'auth.adminDashboard': 'Admin Dashboard',
       
       // Hero Section
-      'hero.title1': 'Pure Madagascar',
-      'hero.title2': 'Vanilla',
-      'hero.subtitle': 'Delivered with Elegance to Mauritius. Experience the authentic taste of premium vanilla beans, sourced directly from Madagascar\'s finest farms.',
+      'hero.title1': 'Fresh Wholesale',
+      'hero.title2': 'Flowers',
+      'hero.subtitle': 'Premium flowers for events, weddings, and businesses in Mauritius. Sourced fresh from local and international suppliers.',
       'hero.shopNow': 'Shop Now',
       'hero.learnStory': 'Learn Our Story',
-      'hero.gradeA': 'Grade A Quality',
-      'hero.directlySourced': 'Directly sourced',
+      'hero.gradeA': 'Fresh Daily',
+      'hero.directlySourced': 'Quality guaranteed',
       
       // Featured Products
-      'featured.title': 'Featured Products',
-      'featured.description': 'Discover our premium selection of Madagascar vanilla products, perfect for gourmet cooking and baking.',
+      'featured.title': 'Featured Flowers',
+      'featured.description': 'Discover our premium selection of fresh wholesale flowers, perfect for weddings, events, and special occasions.',
       'featured.viewAll': 'View All Products',
       
       // Why Choose Us
-      'whyChoose.title': 'Why Choose Vanilluxe?',
-      'whyChoose.description': 'We\'re committed to bringing you the finest vanilla experience in Mauritius.',
-      'whyChoose.premiumSource': 'Premium Source',
-      'whyChoose.premiumSourceDesc': 'Direct from Madagascar\'s finest vanilla farms',
-      'whyChoose.authenticFlavor': 'Authentic Flavor',
-      'whyChoose.authenticFlavorDesc': '100% pure, no artificial additives or preservatives',
-      'whyChoose.handpicked': 'Handpicked Quality',
-      'whyChoose.handpickedDesc': 'Grade A beans selected by experienced farmers',
+      'whyChoose.title': 'Why Choose Flowers Wholesale Mauritius?',
+      'whyChoose.description': 'We\'re committed to bringing you the freshest flowers in Mauritius.',
+      'whyChoose.premiumSource': 'Fresh Daily',
+      'whyChoose.premiumSourceDesc': 'Flowers delivered fresh from trusted suppliers',
+      'whyChoose.authenticFlavor': 'Wide Variety',
+      'whyChoose.authenticFlavorDesc': 'Roses, orchids, seasonal blooms, and custom arrangements',
+      'whyChoose.handpicked': 'Quality Inspected',
+      'whyChoose.handpickedDesc': 'Every stem checked for freshness and quality',
       
       // Recipes
-      'recipes.title': 'Vanilla Recipes',
-      'recipes.description': 'Explore decadent ways to savour our Madagascar vanilla with easy-to-follow recipes.',
-      'recipes.featuredRecipe': 'Featured Recipe',
-      'recipes.viewFullRecipe': 'View full recipe',
-      'recipes.chefTip': 'Chef\'s Tip',
-      'recipes.chefTipDesc': 'Split the vanilla bean lengthwise and scrape out the seeds to infuse the richest flavour into your dessert.',
-      'recipes.madagascarVanilla': 'Madagascar Vanilla',
+      'recipes.title': 'Arrangement Guides',
+      'recipes.description': 'Explore beautiful flower arrangement ideas with easy-to-follow guides.',
+      'recipes.featuredRecipe': 'Featured Guide',
+      'recipes.viewFullRecipe': 'View full guide',
+      'recipes.chefTip': 'Florist\'s Tip',
+      'recipes.chefTipDesc': 'Keep stems in water and trim at an angle for maximum freshness and longevity.',
+      'recipes.madagascarVanilla': 'Fresh Flowers',
       
       // Testimonials
       'testimonials.title': 'What Our Customers Say',
@@ -111,24 +111,24 @@ const getTranslations = (lang: Language): Record<string, string> => {
       
       // About Page
       'about.title': 'Our Story',
-      'about.subtitle': 'Born from a passion for authentic flavors and a deep connection to Madagascar\'s vanilla heritage, Vanilluxe brings you the world\'s finest vanilla to Mauritius.',
-      'about.fromFarms': 'From Madagascar Farms to Your Kitchen',
+      'about.subtitle': 'Born from a passion for fresh blooms and quality service, Flowers Wholesale Mauritius brings you premium wholesale flowers for every occasion.',
+      'about.fromFarms': 'From Suppliers to Your Events',
       'about.vision': 'Our Vision',
       'about.mission': 'Our Mission',
       'about.whatWeStandFor': 'What We Stand For',
       'about.sourcingTransparency': 'Sourcing Transparency',
-      'about.readyToExperience': 'Ready to Experience Premium Vanilla?',
+      'about.readyToExperience': 'Ready for Fresh Wholesale Flowers?',
       'about.contactUs': 'Contact Us',
       
       // Values
       'values.premiumQuality': 'Premium Quality',
-      'values.premiumQualityDesc': 'We source only the finest Grade A vanilla beans from trusted Madagascar farmers.',
-      'values.directTrade': 'Direct Trade',
-      'values.directTradeDesc': 'Building long-term relationships with vanilla farmers for fair and sustainable trade.',
+      'values.premiumQualityDesc': 'We source only the freshest flowers from trusted local and international suppliers.',
+      'values.directTrade': 'Direct Sourcing',
+      'values.directTradeDesc': 'Building long-term relationships with growers for consistent quality and fair pricing.',
       'values.freshDelivery': 'Fresh Delivery',
       'values.freshDeliveryDesc': 'Fast, reliable delivery across Mauritius to ensure maximum freshness.',
       'values.passionDriven': 'Passion Driven',
-      'values.passionDrivenDesc': 'Our love for authentic vanilla drives everything we do at Vanilluxe.',
+      'values.passionDrivenDesc': 'Our love for fresh flowers drives everything we do at Flowers Wholesale Mauritius.',
     },
     fr: {
       // Navigation
@@ -146,37 +146,37 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'auth.adminDashboard': 'Tableau de Bord Admin',
       
       // Hero Section
-      'hero.title1': 'Vanille Pure de',
-      'hero.title2': 'Madagascar',
-      'hero.subtitle': 'Livrée avec Élégance à Maurice. Découvrez le goût authentique des gousses de vanille premium, provenant directement des meilleures fermes de Madagascar.',
+      'hero.title1': 'Fleurs Fraîches',
+      'hero.title2': 'en Gros',
+      'hero.subtitle': 'Fleurs premium pour événements, mariages et entreprises à Maurice. Fraîchement approvisionnées auprès de fournisseurs locaux et internationaux.',
       'hero.shopNow': 'Acheter Maintenant',
       'hero.learnStory': 'Découvrir Notre Histoire',
-      'hero.gradeA': 'Qualité Grade A',
-      'hero.directlySourced': 'Source directe',
+      'hero.gradeA': 'Fraîches Quotidiennement',
+      'hero.directlySourced': 'Qualité garantie',
       
       // Featured Products
-      'featured.title': 'Produits Vedettes',
-      'featured.description': 'Découvrez notre sélection premium de produits à la vanille de Madagascar, parfaits pour la cuisine gastronomique et la pâtisserie.',
+      'featured.title': 'Fleurs Vedettes',
+      'featured.description': 'Découvrez notre sélection premium de fleurs fraîches en gros, parfaites pour mariages, événements et occasions spéciales.',
       'featured.viewAll': 'Voir Tous les Produits',
       
       // Why Choose Us
-      'whyChoose.title': 'Pourquoi Choisir Vanilluxe?',
-      'whyChoose.description': 'Nous nous engageons à vous offrir la meilleure expérience vanille à Maurice.',
-      'whyChoose.premiumSource': 'Source Premium',
-      'whyChoose.premiumSourceDesc': 'Directement des meilleures fermes de vanille de Madagascar',
-      'whyChoose.authenticFlavor': 'Saveur Authentique',
-      'whyChoose.authenticFlavorDesc': '100% pure, sans additifs artificiels ni conservateurs',
-      'whyChoose.handpicked': 'Qualité Sélectionnée',
-      'whyChoose.handpickedDesc': 'Gousses Grade A sélectionnées par des agriculteurs expérimentés',
+      'whyChoose.title': 'Pourquoi Choisir Flowers Wholesale Mauritius?',
+      'whyChoose.description': 'Nous nous engageons à vous offrir les fleurs les plus fraîches à Maurice.',
+      'whyChoose.premiumSource': 'Fraîches Quotidiennement',
+      'whyChoose.premiumSourceDesc': 'Fleurs livrées fraîches de fournisseurs de confiance',
+      'whyChoose.authenticFlavor': 'Grande Variété',
+      'whyChoose.authenticFlavorDesc': 'Roses, orchidées, fleurs saisonnières et arrangements personnalisés',
+      'whyChoose.handpicked': 'Qualité Inspectée',
+      'whyChoose.handpickedDesc': 'Chaque tige vérifiée pour sa fraîcheur et sa qualité',
       
       // Recipes
-      'recipes.title': 'Recettes à la Vanille',
-      'recipes.description': 'Explorez des façons décadentes de savourer notre vanille de Madagascar avec des recettes faciles à suivre.',
-      'recipes.featuredRecipe': 'Recette Vedette',
-      'recipes.viewFullRecipe': 'Voir la recette complète',
-      'recipes.chefTip': 'Conseil du Chef',
-      'recipes.chefTipDesc': 'Fendez la gousse de vanille dans le sens de la longueur et grattez les graines pour infuser la saveur la plus riche dans votre dessert.',
-      'recipes.madagascarVanilla': 'Vanille de Madagascar',
+      'recipes.title': 'Guides d\'Arrangement',
+      'recipes.description': 'Explorez de belles idées d\'arrangements floraux avec des guides faciles à suivre.',
+      'recipes.featuredRecipe': 'Guide Vedette',
+      'recipes.viewFullRecipe': 'Voir le guide complet',
+      'recipes.chefTip': 'Conseil du Fleuriste',
+      'recipes.chefTipDesc': 'Gardez les tiges dans l\'eau et coupez en biais pour une fraîcheur et une longévité maximales.',
+      'recipes.madagascarVanilla': 'Fleurs Fraîches',
       
       // Testimonials
       'testimonials.title': 'Ce Que Disent Nos Clients',
@@ -187,24 +187,24 @@ const getTranslations = (lang: Language): Record<string, string> => {
       
       // About Page
       'about.title': 'Notre Histoire',
-      'about.subtitle': 'Née d\'une passion pour les saveurs authentiques et d\'un lien profond avec l\'héritage vanillier de Madagascar, Vanilluxe vous apporte la meilleure vanille du monde à Maurice.',
-      'about.fromFarms': 'Des Fermes de Madagascar à Votre Cuisine',
+      'about.subtitle': 'Née d\'une passion pour les fleurs fraîches et un service de qualité, Flowers Wholesale Mauritius vous apporte des fleurs en gros premium pour chaque occasion.',
+      'about.fromFarms': 'Des Fournisseurs à Vos Événements',
       'about.vision': 'Notre Vision',
       'about.mission': 'Notre Mission',
       'about.whatWeStandFor': 'Nos Valeurs',
       'about.sourcingTransparency': 'Transparence d\'Approvisionnement',
-      'about.readyToExperience': 'Prêt à Découvrir la Vanille Premium?',
+      'about.readyToExperience': 'Prêt pour des Fleurs Fraîches en Gros?',
       'about.contactUs': 'Nous Contacter',
       
       // Values
       'values.premiumQuality': 'Qualité Premium',
-      'values.premiumQualityDesc': 'Nous nous approvisionnons uniquement en gousses de vanille Grade A auprès d\'agriculteurs malgaches de confiance.',
-      'values.directTrade': 'Commerce Direct',
-      'values.directTradeDesc': 'Construction de relations à long terme avec les cultivateurs de vanille pour un commerce équitable et durable.',
+      'values.premiumQualityDesc': 'Nous nous approvisionnons uniquement en fleurs fraîches auprès de fournisseurs locaux et internationaux de confiance.',
+      'values.directTrade': 'Approvisionnement Direct',
+      'values.directTradeDesc': 'Construction de relations à long terme avec les producteurs pour une qualité constante et des prix équitables.',
       'values.freshDelivery': 'Livraison Fraîche',
       'values.freshDeliveryDesc': 'Livraison rapide et fiable à travers Maurice pour assurer une fraîcheur maximale.',
       'values.passionDriven': 'Animés par la Passion',
-      'values.passionDrivenDesc': 'Notre amour pour la vanille authentique guide tout ce que nous faisons chez Vanilluxe.',
+      'values.passionDrivenDesc': 'Notre amour pour les fleurs fraîches guide tout ce que nous faisons chez Flowers Wholesale Mauritius.',
     }
   };
   
