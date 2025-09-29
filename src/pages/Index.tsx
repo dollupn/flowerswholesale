@@ -5,9 +5,11 @@ import {
   Star,
   Truck,
   Shield,
-  Award,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Flower2,
+  Palette,
+  Sprout
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -47,17 +49,17 @@ const Index = () => {
 
   const features = [
     {
-      icon: Award,
+      icon: Flower2,
       title: t("whyChoose.premiumSource"),
       description: t("whyChoose.premiumSourceDesc")
     },
     {
-      icon: Shield,
+      icon: Palette,
       title: t("whyChoose.authenticFlavor"),
       description: t("whyChoose.authenticFlavorDesc")
     },
     {
-      icon: Star,
+      icon: Sprout,
       title: t("whyChoose.handpicked"),
       description: t("whyChoose.handpickedDesc")
     }
@@ -66,32 +68,34 @@ const Index = () => {
   // Flower arrangement guides with paths
   const recipes = [
     {
-      title: "Elegant Wedding Centerpiece",
+      title: "Luxe Wedding Tablescape",
       description:
-        "Create stunning table arrangements with roses, baby's breath, and eucalyptus for the perfect wedding ambiance.",
-      image: "/lovable-uploads/creme.webp",
-      prepTime: "30 mins setup",
-      serves: "10 centerpieces",
-      path: "/recipes/vanilla-bean-creme-brulee"
-    },
-    {
-      title: "Corporate Event Arrangement",
-      description:
-        "Professional floral displays combining orchids and tropical foliage for sophisticated business events.",
-      image: "/lovable-uploads/cake.webp",
-      prepTime: "1 hour setup",
-      serves: "Large venue",
-      path: "/recipes/mauritian-vanilla-gateau"
-    },
-    {
-      title: "Seasonal Bouquet Guide",
-      description:
-        "Fresh seasonal blooms arranged with island flair - perfect for gifts and special occasions.",
+        "Layer romantic roses, lisianthus, and trailing greenery to create statement centerpieces for island weddings.",
       image:
-        "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=1200&q=80",
-      prepTime: "20 mins",
+        "https://images.unsplash.com/photo-1511288590151-1e47ef91167d?auto=format&fit=crop&w=1200&q=80",
+      prepTime: "Design time: 45 mins",
+      serves: "10 centerpieces",
+      path: "/contact"
+    },
+    {
+      title: "Corporate Welcome Arrangement",
+      description:
+        "Blend elegant orchids with tropical foliage for reception desks and conference stages that impress your guests.",
+      image:
+        "https://images.unsplash.com/photo-1470309864661-68328b2cd0a5?auto=format&fit=crop&w=1200&q=80",
+      prepTime: "Design time: 1 hour",
+      serves: "Lobby display",
+      path: "/contact"
+    },
+    {
+      title: "Seasonal Gift Bouquet",
+      description:
+        "Combine colourful seasonal blooms with textured accents for thoughtful bouquets ready to delight.",
+      image:
+        "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80",
+      prepTime: "Design time: 20 mins",
       serves: "5 bouquets",
-      path: "/recipes/vanilla-spice-iced-latte"
+      path: "/shop"
     }
   ];
   const recipeCount = recipes.length;
@@ -114,19 +118,15 @@ const Index = () => {
     <div className="mobile-safe-bottom">
       <Header />
 
-      {/* Hero Section (full background video) */}
+      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        <video
-          src="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster="https://dollupboutique.com/wp-content/uploads/2025/09/vanilla-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover motion-safe:opacity-100"
+        <img
+          src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1800&q=80"
+          alt="Colorful assortment of fresh flowers"
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-cream/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-vanilla-cream via-vanilla-beige/80 to-vanilla-brown/20 pointer-events-none" />
         <div className="relative z-10 container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
@@ -141,7 +141,7 @@ const Index = () => {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8"
+                  className="bg-vanilla-brown hover:bg-vanilla-brown/90 text-vanilla-cream px-8 shadow-lg"
                 >
                   <Link to="/shop">
                     <ShoppingCart className="w-5 h-5 mr-2" />
@@ -159,7 +159,35 @@ const Index = () => {
               </div>
             </div>
             <div className="hidden lg:block relative">
-              <div className="absolute bottom-6 left-6 bg-vanilla-yellow p-4 rounded-xl luxury-shadow">
+              <div className="grid grid-cols-2 gap-5">
+                <div className="rounded-3xl overflow-hidden shadow-2xl aspect-[3/4]">
+                  <img
+                    src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80"
+                    alt="Wedding florist arranging roses"
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="space-y-5">
+                  <div className="rounded-3xl overflow-hidden shadow-xl aspect-square">
+                    <img
+                      src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=700&q=80"
+                      alt="Colorful bouquet of seasonal flowers"
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="rounded-3xl overflow-hidden shadow-xl aspect-square">
+                    <img
+                      src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=700&q=80"
+                      alt="Freshly prepared floral centerpieces"
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-vanilla-yellow px-6 py-4 rounded-xl luxury-shadow">
                 <p className="text-vanilla-brown font-semibold">{t("hero.gradeA")}</p>
                 <p className="text-vanilla-brown/70 text-sm">{t("hero.directlySourced")}</p>
               </div>
