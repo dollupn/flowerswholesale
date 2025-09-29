@@ -63,13 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Vanilluxe brand colors
-				vanilla: {
-					cream: '#F9F5F0',
-					yellow: '#FCE5B2',
-					brown: '#4A2C18',
-					beige: '#D6C7B0'
-				}
+                                // Floral-inspired brand colors
+                                vanilla: {
+                                        cream: '#FEF5FB',
+                                        yellow: '#F6C6E1',
+                                        brown: '#4C1C32',
+                                        beige: '#E6D6F2'
+                                }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

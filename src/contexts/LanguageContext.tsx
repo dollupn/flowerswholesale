@@ -72,35 +72,35 @@ const getTranslations = (lang: Language): Record<string, string> => {
       // Hero Section
       'hero.title1': 'Fresh Wholesale',
       'hero.title2': 'Flowers',
-      'hero.subtitle': 'Premium flowers for events, weddings, and businesses in Mauritius. Sourced fresh from local and international suppliers.',
+      'hero.subtitle': 'Premium flowers for events, weddings, and businesses in Mauritius. Expertly conditioned and delivered at their freshest.',
       'hero.shopNow': 'Shop Now',
       'hero.learnStory': 'Learn Our Story',
-      'hero.gradeA': 'Fresh Daily',
-      'hero.directlySourced': 'Quality guaranteed',
+      'hero.gradeA': '50+ Floral Varieties',
+      'hero.directlySourced': 'Hand-selected from trusted growers',
       
       // Featured Products
       'featured.title': 'Featured Flowers',
-      'featured.description': 'Discover our premium selection of fresh wholesale flowers, perfect for weddings, events, and special occasions.',
+      'featured.description': 'Discover our curated lineup of premium stems ready for weddings, events, and bespoke deliveries.',
       'featured.viewAll': 'View All Products',
       
       // Why Choose Us
       'whyChoose.title': 'Why Choose Flowers Wholesale Mauritius?',
-      'whyChoose.description': 'We\'re committed to bringing you the freshest flowers in Mauritius.',
-      'whyChoose.premiumSource': 'Fresh Daily',
-      'whyChoose.premiumSourceDesc': 'Flowers delivered fresh from trusted suppliers',
-      'whyChoose.authenticFlavor': 'Wide Variety',
-      'whyChoose.authenticFlavorDesc': 'Roses, orchids, seasonal blooms, and custom arrangements',
-      'whyChoose.handpicked': 'Quality Inspected',
-      'whyChoose.handpickedDesc': 'Every stem checked for freshness and quality',
+      'whyChoose.description': 'We\'re committed to bringing you floral artistry with the freshest stems in Mauritius.',
+      'whyChoose.premiumSource': 'Freshly Cut Blooms',
+      'whyChoose.premiumSourceDesc': 'Harvested each morning from our partner farms',
+      'whyChoose.authenticFlavor': 'Bespoke Floral Styling',
+      'whyChoose.authenticFlavorDesc': 'Bouquets, centerpieces, and installations tailored to your event',
+      'whyChoose.handpicked': 'Expert Care',
+      'whyChoose.handpickedDesc': 'Professional conditioning and quality control for every stem',
       
       // Recipes
       'recipes.title': 'Arrangement Guides',
-      'recipes.description': 'Explore beautiful flower arrangement ideas with easy-to-follow guides.',
+      'recipes.description': 'Get inspired by curated arrangement guides for weddings, events, and gifts.',
       'recipes.featuredRecipe': 'Featured Guide',
       'recipes.viewFullRecipe': 'View full guide',
       'recipes.chefTip': 'Florist\'s Tip',
-      'recipes.chefTipDesc': 'Keep stems in water and trim at an angle for maximum freshness and longevity.',
-      'recipes.madagascarVanilla': 'Fresh Flowers',
+      'recipes.chefTipDesc': 'Keep stems hydrated and trim at an angle for maximum freshness and longevity.',
+      'recipes.madagascarVanilla': 'Seasonal Blooms',
       
       // Testimonials
       'testimonials.title': 'What Our Customers Say',
@@ -148,35 +148,35 @@ const getTranslations = (lang: Language): Record<string, string> => {
       // Hero Section
       'hero.title1': 'Fleurs Fraîches',
       'hero.title2': 'en Gros',
-      'hero.subtitle': 'Fleurs premium pour événements, mariages et entreprises à Maurice. Fraîchement approvisionnées auprès de fournisseurs locaux et internationaux.',
+      'hero.subtitle': 'Fleurs premium pour événements, mariages et entreprises à Maurice. Préparées avec soin et livrées à la fraîcheur maximale.',
       'hero.shopNow': 'Acheter Maintenant',
       'hero.learnStory': 'Découvrir Notre Histoire',
-      'hero.gradeA': 'Fraîches Quotidiennement',
-      'hero.directlySourced': 'Qualité garantie',
+      'hero.gradeA': '50+ Variétés Florales',
+      'hero.directlySourced': 'Sélectionnées auprès de producteurs de confiance',
       
       // Featured Products
       'featured.title': 'Fleurs Vedettes',
-      'featured.description': 'Découvrez notre sélection premium de fleurs fraîches en gros, parfaites pour mariages, événements et occasions spéciales.',
+      'featured.description': 'Découvrez notre sélection de tiges premium, idéale pour mariages, événements et livraisons sur mesure.',
       'featured.viewAll': 'Voir Tous les Produits',
       
       // Why Choose Us
       'whyChoose.title': 'Pourquoi Choisir Flowers Wholesale Mauritius?',
-      'whyChoose.description': 'Nous nous engageons à vous offrir les fleurs les plus fraîches à Maurice.',
-      'whyChoose.premiumSource': 'Fraîches Quotidiennement',
-      'whyChoose.premiumSourceDesc': 'Fleurs livrées fraîches de fournisseurs de confiance',
-      'whyChoose.authenticFlavor': 'Grande Variété',
-      'whyChoose.authenticFlavorDesc': 'Roses, orchidées, fleurs saisonnières et arrangements personnalisés',
-      'whyChoose.handpicked': 'Qualité Inspectée',
-      'whyChoose.handpickedDesc': 'Chaque tige vérifiée pour sa fraîcheur et sa qualité',
+      'whyChoose.description': 'Nous mettons notre art floral et les tiges les plus fraîches de Maurice à votre service.',
+      'whyChoose.premiumSource': 'Fleurs Fraîchement Coupées',
+      'whyChoose.premiumSourceDesc': 'Récoltées chaque matin auprès de nos partenaires horticoles',
+      'whyChoose.authenticFlavor': 'Créations Florales Sur Mesure',
+      'whyChoose.authenticFlavorDesc': 'Bouquets, centres de table et installations adaptés à chaque événement',
+      'whyChoose.handpicked': 'Soin Expert',
+      'whyChoose.handpickedDesc': 'Préparation professionnelle et contrôle qualité de chaque tige',
       
       // Recipes
       'recipes.title': 'Guides d\'Arrangement',
-      'recipes.description': 'Explorez de belles idées d\'arrangements floraux avec des guides faciles à suivre.',
+      'recipes.description': 'Laissez-vous inspirer par des guides d\'arrangements créés pour mariages, événements et cadeaux.',
       'recipes.featuredRecipe': 'Guide Vedette',
       'recipes.viewFullRecipe': 'Voir le guide complet',
       'recipes.chefTip': 'Conseil du Fleuriste',
-      'recipes.chefTipDesc': 'Gardez les tiges dans l\'eau et coupez en biais pour une fraîcheur et une longévité maximales.',
-      'recipes.madagascarVanilla': 'Fleurs Fraîches',
+      'recipes.chefTipDesc': 'Hydratez bien les tiges et coupez-les en biais pour une fraîcheur et une longévité optimales.',
+      'recipes.madagascarVanilla': 'Fleurs de Saison',
       
       // Testimonials
       'testimonials.title': 'Ce Que Disent Nos Clients',

@@ -5,44 +5,44 @@
 
 @layer base {
   :root {
-    --background: 28 20% 97%;
-    --foreground: 25 100% 5%;
+    --background: 330 65% 97%;
+    --foreground: 335 45% 14%;
 
-    --card: 28 20% 97%;
-    --card-foreground: 25 100% 8%;
+    --card: 330 65% 97%;
+    --card-foreground: 335 45% 18%;
 
-    --popover: 28 20% 97%;
-    --popover-foreground: 25 100% 8%;
+    --popover: 330 65% 97%;
+    --popover-foreground: 335 45% 18%;
 
-    --primary: 25 45% 11%;
-    --primary-foreground: 28 20% 97%;
+    --primary: 336 45% 24%;
+    --primary-foreground: 330 65% 97%;
 
-    --secondary: 37 25% 85%;
-    --secondary-foreground: 25 45% 11%;
+    --secondary: 318 60% 85%;
+    --secondary-foreground: 335 45% 24%;
 
-    --muted: 37 25% 85%;
-    --muted-foreground: 25 20% 40%;
+    --muted: 285 45% 88%;
+    --muted-foreground: 318 30% 40%;
 
-    --accent: 37 25% 85%;
-    --accent-foreground: 25 45% 11%;
+    --accent: 318 60% 85%;
+    --accent-foreground: 335 45% 24%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 37 25% 85%;
-    --input: 37 25% 85%;
-    --ring: 25 45% 11%;
+    --border: 295 45% 86%;
+    --input: 295 45% 86%;
+    --ring: 336 45% 24%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 28 20% 97%;
-    --sidebar-foreground: 25 100% 8%;
-    --sidebar-primary: 25 45% 11%;
-    --sidebar-primary-foreground: 28 20% 97%;
-    --sidebar-accent: 37 25% 85%;
-    --sidebar-accent-foreground: 25 45% 11%;
-    --sidebar-border: 37 25% 85%;
-    --sidebar-ring: 25 45% 11%;
+    --sidebar-background: 330 65% 97%;
+    --sidebar-foreground: 335 45% 18%;
+    --sidebar-primary: 336 45% 24%;
+    --sidebar-primary-foreground: 330 65% 97%;
+    --sidebar-accent: 318 60% 85%;
+    --sidebar-accent-foreground: 335 45% 24%;
+    --sidebar-border: 295 45% 86%;
+    --sidebar-ring: 336 45% 24%;
   }
 }
 
@@ -62,11 +62,11 @@
 
 @layer components {
   .gradient-bg {
-    @apply bg-gradient-to-br from-vanilla-cream via-vanilla-yellow/20 to-vanilla-beige/30;
+    @apply bg-gradient-to-br from-vanilla-cream via-vanilla-beige/40 to-white;
   }
-  
+
   .luxury-shadow {
-    box-shadow: 0 8px 30px rgba(74, 44, 24, 0.12);
+    box-shadow: 0 8px 30px rgba(76, 28, 50, 0.14);
   }
   
   .hover-lift {
