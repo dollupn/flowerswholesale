@@ -29,6 +29,7 @@ import VanillaBeanCremeBrulee from "./pages/recipes/VanillaBeanCremeBrulee";
 import MauritianVanillaGateau from "./pages/recipes/MauritianVanillaGateau";
 import VanillaSpiceIcedLatte from "./pages/recipes/VanillaSpiceIcedLatte";
 import ScrollToTop from "./components/ScrollToTop";
+import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <FloatingWhatsAppButton />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
