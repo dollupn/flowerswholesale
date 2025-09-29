@@ -157,6 +157,9 @@ const Index = () => {
                   <Link to="/about">{t("hero.learnStory")}</Link>
                 </Button>
               </div>
+              <p className="mt-4 text-sm text-vanilla-brown/70">
+                {t("hero.wholesaleMinimum")}
+              </p>
             </div>
             <div className="hidden lg:block relative">
               <div className="grid grid-cols-2 gap-5">

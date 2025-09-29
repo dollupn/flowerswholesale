@@ -77,6 +77,7 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'hero.learnStory': 'Learn Our Story',
       'hero.gradeA': '50+ Floral Varieties',
       'hero.directlySourced': 'Hand-selected from trusted growers',
+      'hero.wholesaleMinimum': 'Wholesale orders require a minimum of 10 pieces.',
       
       // Featured Products
       'featured.title': 'Featured Flowers',
@@ -108,6 +109,9 @@ const getTranslations = (lang: Language): Record<string, string> => {
       // Delivery
       'delivery.islandWide': 'Island-wide Delivery',
       'delivery.qualityGuaranteed': 'Quality Guaranteed',
+
+      // WhatsApp CTA
+      'whatsapp.cta': 'WhatsApp us for a personalized quote',
       
       // About Page
       'about.title': 'Our Story',
@@ -153,6 +157,7 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'hero.learnStory': 'Découvrir Notre Histoire',
       'hero.gradeA': '50+ Variétés Florales',
       'hero.directlySourced': 'Sélectionnées auprès de producteurs de confiance',
+      'hero.wholesaleMinimum': 'Commandes en gros avec un minimum de 10 pièces.',
       
       // Featured Products
       'featured.title': 'Fleurs Vedettes',
@@ -184,6 +189,9 @@ const getTranslations = (lang: Language): Record<string, string> => {
       // Delivery
       'delivery.islandWide': 'Livraison dans Toute l\'Île',
       'delivery.qualityGuaranteed': 'Qualité Garantie',
+
+      // WhatsApp CTA
+      'whatsapp.cta': 'Contactez-nous sur WhatsApp pour un devis personnalisé',
       
       // About Page
       'about.title': 'Notre Histoire',
