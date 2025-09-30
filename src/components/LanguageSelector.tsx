@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCountryFlag from 'react-country-flag';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,14 +16,14 @@ const LanguageSelector = () => {
     {
       code: 'en' as const,
       name: 'English',
-      flag: '🇬🇧'
+      countryCode: 'GB',
     },
     {
       code: 'fr' as const,
       name: 'Français',
-      flag: '🇫🇷'
-    }
-  ];
+      countryCode: 'FR',
+    },
+  ] as const;
 
   const currentLanguage = languages.find(lang => lang.code === language);
 
@@ -30,7 +31,15 @@ const LanguageSelector = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 px-2">
-          <span className="text-lg mr-1">{currentLanguage?.flag}</span>
+          {currentLanguage && (
+            <ReactCountryFlag
+              svg
+              countryCode={currentLanguage.countryCode}
+              className="mr-1"
+              style={{ width: '1.25rem', height: '1.25rem' }}
+              aria-label={currentLanguage.name}
+            />
+          )}
           <span className="text-sm font-medium">{currentLanguage?.code.toUpperCase()}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -41,7 +50,13 @@ const LanguageSelector = () => {
             onClick={() => setLanguage(lang.code)}
             className={`cursor-pointer ${language === lang.code ? 'bg-vanilla-beige/20' : ''}`}
           >
-            <span className="text-lg mr-2">{lang.flag}</span>
+            <ReactCountryFlag
+              svg
+              countryCode={lang.countryCode}
+              className="mr-2"
+              style={{ width: '1.25rem', height: '1.25rem' }}
+              aria-label={lang.name}
+            />
             <span className="text-sm">{lang.name}</span>
           </DropdownMenuItem>
         ))}
