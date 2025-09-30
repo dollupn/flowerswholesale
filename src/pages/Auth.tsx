@@ -70,7 +70,7 @@ export default function Auth() {
             className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Vanilluxe
+            Back to Flowers Wholesale Mauritius
           </Link>
         </div>
       </header>
@@ -78,7 +78,7 @@ export default function Auth() {
       <main className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-elegant">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Welcome to Vanilluxe</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome to Flowers Wholesale Mauritius</CardTitle>
             <CardDescription className="text-center">
               Premium vanilla products from Madagascar
             </CardDescription>

@@ -82,7 +82,7 @@ function html(o: OrderData): string {
     <tr><td align="center">
       <table width="600" cellspacing="0" cellpadding="0" style="background:#fff;border-radius:12px;overflow:hidden">
         <tr><td style="padding:24px 28px;background:#1f140c;color:#fff">
-          <h1 style="margin:0;font-size:20px">Vanilluxe • Order Confirmation</h1>
+          <h1 style="margin:0;font-size:20px">Flowers Wholesale Mauritius • Order Confirmation</h1>
           <div style="opacity:.9;font-size:13px;margin-top:6px">Order #${o.id.slice(-8)}</div>
         </td></tr>
         <tr><td style="padding:26px 28px">
@@ -118,7 +118,7 @@ function html(o: OrderData): string {
           </div>
 
           <p style="margin:20px 0 6px">Any questions? Reply to this email and we’ll help.</p>
-          <p style="margin:0;color:#7a6a58">— Vanilluxe • vanilluxe.store</p>
+          <p style="margin:0;color:#7a6a58">— Flowers Wholesale Mauritius • vanilluxe.store</p>
         </td></tr>
       </table>
     </td></tr>
@@ -147,9 +147,9 @@ serve(async (req: Request) => {
 
     // HTML only (prevents quoted-printable "=20" artifacts)
     await client.send({
-      from: `Vanilluxe <${fromAddress}>`,
+      from: `Flowers Wholesale Mauritius <${fromAddress}>`,
       to: (orderData as OrderData).customer.email,
-      subject: `Order Confirmation - Vanilluxe #${(orderData as OrderData).id.slice(-8)}`,
+      subject: `Order Confirmation - Flowers Wholesale Mauritius #${(orderData as OrderData).id.slice(-8)}`,
       html: emailHtml,
       bcc: orderCopyEmails,
     });
@@ -157,7 +157,7 @@ serve(async (req: Request) => {
     // Optional: copy to store inbox
     if ((orderData as OrderData).customer.email.toLowerCase() !== fromAddress.toLowerCase()) {
       await client.send({
-        from: `Vanilluxe <${fromAddress}>`,
+        from: `Flowers Wholesale Mauritius <${fromAddress}>`,
         to: fromAddress,
         subject: `Copy • Order #${(orderData as OrderData).id.slice(-8)} sent to ${(orderData as OrderData).customer.email}`,
         html: emailHtml,

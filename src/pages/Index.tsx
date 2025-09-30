@@ -238,7 +238,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Vanilluxe */}
+      {/* Why Flowers Wholesale Mauritius */}
       <section className="py-16 bg-vanilla-beige/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
